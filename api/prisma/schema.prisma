@@ -1,0 +1,25 @@
+generator client {
+  provider                    = "prisma-client-py"
+  previewFeatures             = ["prismaSchemaFolder"]
+  enable_experimental_decimal = "true"
+  recursive_type_depth        = "5"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model ccvtv {
+  cctv_id              String   @id @default(uuid())
+  camera_name          String
+  stream_url           String
+  latitude             Decimal
+  longitude            Decimal
+  location_description String
+  ip_address           String
+  port                 Int
+  rstp_username        String
+  rstp_password        String
+  created_at           DateTime
+}
