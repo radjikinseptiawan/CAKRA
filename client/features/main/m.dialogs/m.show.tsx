@@ -60,8 +60,16 @@ export default function MainDialogsShow() {
         >
           Close
         </Button>
-        <Button size="small" variant="contained" color="error">
-          <Trash /> Delete
+        <Button
+          onClick={() =>
+            router.push(`?confirmation=delete&id=${selectedCamera?.cctv_id}`)
+          }
+          size="small"
+          className="flex items-center gap-x-4"
+          variant="contained"
+          color="error"
+        >
+          <Trash size={18} /> Delete
         </Button>
       </DialogActions>
     </Dialog>

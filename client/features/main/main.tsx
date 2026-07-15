@@ -6,6 +6,7 @@ import dynamic from "next/dynamic";
 import { useEffect } from "react";
 import MainDialogsAdd from "./m.dialogs/m.add";
 import MainDialogsShow from "./m.dialogs/m.show";
+import MainDialogDelete from "./m.dialogs/m.delete";
 
 const Maps = dynamic(() => import("../../components/maps"), {
   ssr: false,
@@ -17,6 +18,7 @@ export default function MainFeatures() {
         <Maps />
         <MainDialogsAdd />
         <MainDialogsShow />
+        <MainDialogDelete />
       </main>
     </div>
   );
