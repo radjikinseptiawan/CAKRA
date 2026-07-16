@@ -25,11 +25,8 @@ async def create_camera_service(body):
             "stream_url" : body.stream_url,
             "latitude" : body.latitude,
             "longitude" : body.longitude,
+            "category" : body.category,
             "location_description" : body.location_description,
-            "ip_address" : body.ip_address,
-            "port" : body.port,
-            "rstp_username" : body.rstp_username,
-            "rstp_password" : body.rstp_password,
             "created_at" : datetime.now(timezone.utc)
         }
 

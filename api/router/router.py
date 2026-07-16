@@ -1,9 +1,20 @@
 from fastapi import APIRouter
 from schema.cctv_schema import CCTVCreate
+from schema.account_schema import AccountModel, ProfileModel, RegisterProfile
 import services.main_service as Services
 import services.cctv_service as CCTVService
+import services.account_service as AccountService
+
 router = APIRouter()
 
+# Authentication Router
+@router.post("/account/login")
+async def sign_in(body : AccountModel):
+    return await AccountService.sign_in_account(body)
+
+@router.post("/account/register")
+async def create_account(body : RegisterProfile ):
+    return await AccountService.create_account(body)
 
 # Data kekerasan dari layanan eksternal & database
 @router.get("/violance")

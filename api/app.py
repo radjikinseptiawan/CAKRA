@@ -1,11 +1,14 @@
 from fastapi import FastAPI
+from os import getenv
 from fastapi.middleware.cors import CORSMiddleware
 from router.router import router
 from lib.db import db
 
+local = getenv("WEB_URL_LOCAL")
+production = getenv("WEB_URL_PRODUCTION")
 
 app = FastAPI()
-origins = ["http://localhost:3000"]
+origins = [local]
 
 @app.on_event("startup")
 async def start_up():

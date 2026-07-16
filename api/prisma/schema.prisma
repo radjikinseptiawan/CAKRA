@@ -1,8 +1,8 @@
 generator client {
   provider                    = "prisma-client-py"
   previewFeatures             = ["prismaSchemaFolder"]
-  enable_experimental_decimal = "true"
   recursive_type_depth        = "5"
+  enable_experimental_decimal = "true"
 }
 
 datasource db {
@@ -11,15 +11,39 @@ datasource db {
 }
 
 model ccvtv {
-  cctv_id              String   @id @default(uuid())
+  cctv_id              String         @id @default(uuid())
   camera_name          String
   stream_url           String
   latitude             Decimal
+  category             CategoryCamera
   longitude            Decimal
   location_description String
-  ip_address           String
-  port                 Int
-  rstp_username        String
-  rstp_password        String
   created_at           DateTime
+}
+
+model Accounts {
+  account_id String   @id @default(uuid())
+  username   String   @unique()
+  password   String
+  Profile    Profile?
+}
+
+model Profile {
+  profile_id String   @id @default(uuid())
+  account_id String   @unique
+  fullname   String
+  role       Role
+  email      String
+  account    Accounts @relation(fields: [account_id], references: [account_id])
+}
+
+enum Role {
+  OWNER
+  STAFF
+  VISITOR
+}
+
+enum CategoryCamera {
+  PUBLIC
+  PRIVATE
 }
