@@ -12,6 +12,7 @@ import {
 } from "@mui/material";
 import { KATEGORI_LABEL } from "../resources/category.source";
 import { FlatRow } from "@/@types/maps.type";
+import Link from "next/link";
 
 const ROWS_PER_PAGE = 10;
 

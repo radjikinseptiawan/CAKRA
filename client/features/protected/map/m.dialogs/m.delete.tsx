@@ -8,16 +8,17 @@ import {
   DialogTitle,
 } from "@mui/material";
 import { AlertCircleIcon } from "lucide-react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
-export default function MainDialogDelete() {
+export default function MapsDialogDelete() {
   const router = useRouter();
   const confirmation = useSearchParams().get("confirmation");
+  const pathname = usePathname();
   const id = useSearchParams().get("id");
   const deleteCameraCCTV = async () => {
     if (!id) return null;
     const response = await deleteCamera(id as string);
-    window.location.replace("/");
+    window.location.replace(pathname);
     return response;
   };
 

@@ -7,7 +7,7 @@ import { CameraCCTVType } from "@/@types/camera.type";
 import { Info } from "lucide-react";
 import { useRouter } from "next/navigation";
 
-export default function MainForms() {
+export default function MapsForms() {
   const { isOpen, setIsOpen, selectedCoordinat } = useMapProvider();
   const router = useRouter();
   const {
@@ -31,6 +31,7 @@ export default function MainForms() {
 
   const submitform = async (data: CameraCCTVType) => {
     try {
+      console.log(data);
       const response = await addCamera(data);
       window.location.reload();
       setIsOpen(false);
@@ -97,64 +98,6 @@ export default function MainForms() {
           {errors && (
             <p className="text-[12px] text-red-400">
               {errors.longitude?.message}
-            </p>
-          )}
-        </div>
-      </div>
-
-      <div className="flex gap-x-4 my-2">
-        <div className="flex flex-col">
-          <FormLabel>IP Address</FormLabel>
-          <Input
-            autoComplete="off"
-            autoCorrect="off"
-            {...register("ip_address")}
-          />
-          {errors && (
-            <p className="text-[12px] text-red-400">
-              {errors.ip_address?.message}
-            </p>
-          )}
-        </div>
-        <div className="flex flex-col">
-          <FormLabel>Port</FormLabel>
-          <Input
-            autoComplete="off"
-            autoCorrect="off"
-            type="number"
-            {...register("port", { valueAsNumber: true })}
-          />
-          {errors && (
-            <p className="text-[12px] text-red-400">{errors.port?.message}</p>
-          )}
-        </div>
-      </div>
-
-      <div className="flex gap-x-4 my-2">
-        <div className="flex flex-col">
-          <FormLabel>RTSP Username</FormLabel>
-          <Input
-            autoComplete="off"
-            autoCorrect="off"
-            {...register("rstp_username")}
-          />
-          {errors && (
-            <p className="text-[12px] text-red-400">
-              {errors.rstp_username?.message}
-            </p>
-          )}
-        </div>
-        <div className="flex flex-col">
-          <FormLabel>RTSP Password</FormLabel>
-          <Input
-            type="password"
-            autoComplete="off"
-            autoCorrect="off"
-            {...register("rstp_password")}
-          />
-          {errors && (
-            <p className="text-[12px] text-red-400">
-              {errors.rstp_password?.message}
             </p>
           )}
         </div>

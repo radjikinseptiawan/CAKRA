@@ -38,8 +38,8 @@ export default function Maps() {
     if (!mapRef.current || mapInstanceRef.current) return;
 
     const map = L.map(mapRef.current, {
-      center: [-6.2322283, 107.1200953],
-      zoom: 20,
+      center: [-6.231346884462741, 107.24551391595016],
+      zoom: 11,
       doubleClickZoom: false,
     });
 
@@ -124,12 +124,6 @@ export default function Maps() {
         const divider = document.createElement("hr");
         divider.className = "border-gray-100 my-1";
         textContainer.appendChild(divider);
-
-        const ipaddress = document.createElement("p");
-        ipaddress.innerText = `IP: ${cam.ip_address}`;
-        ipaddress.className =
-          "text-[11px] font-mono text-gray-400 font-medium tracking-wide";
-        textContainer.appendChild(ipaddress);
 
         const button = document.createElement("button");
         button.innerText = "Lihat Detail";

@@ -14,7 +14,7 @@ import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-export default function MainDialogsShow() {
+export default function MapsDialogsShow() {
   const id = useSearchParams().get("id");
   const router = useRouter();
   const [selectedCamera, setSelectedCamera] = useState<CameraCCTVType>();

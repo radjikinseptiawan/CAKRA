@@ -8,10 +8,10 @@ import {
   FormLabel,
   Input,
 } from "@mui/material";
-import MainForms from "../m.forms/m.forms";
+import MapsForms from "../m.forms/m.forms";
 import { Info } from "lucide-react";
 
-export default function MainDialogsAdd() {
+export default function MapsDialogsAdd() {
   const { isOpen, setIsOpen } = useMapProvider();
 
   const closeDialogs = () => {
@@ -41,7 +41,7 @@ export default function MainDialogsAdd() {
           </div>
         </div>
 
-        <MainForms />
+        <MapsForms />
       </DialogContent>
     </Dialog>
   );

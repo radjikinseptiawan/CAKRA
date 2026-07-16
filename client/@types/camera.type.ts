@@ -4,9 +4,5 @@ export type CameraCCTVType = {
   stream_url: string;
   latitude: number;
   longitude: number;
-  port: number;
   location_description: string;
-  ip_address: string;
-  rstp_username: string;
-  rstp_password: string;
 };
