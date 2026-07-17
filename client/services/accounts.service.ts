@@ -2,6 +2,19 @@ import axios from "axios";
 import { BASE_URL } from "./maps.service";
 import { AccountProfileSchema, LoginSchema } from "@/@types/account.type";
 
+export const updateRoleService = async (data: { role: string }, id: string) => {
+  try {
+    const response = await axios.patch(`${BASE_URL}/users/${id}`, data, {
+      withCredentials: true,
+    });
+
+    const result = response;
+    return result;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 export const allAccountsUsers = async () => {
   try {
     const response = await axios.get(`${BASE_URL}/users`, {

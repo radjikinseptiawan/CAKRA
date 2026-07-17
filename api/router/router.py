@@ -1,7 +1,7 @@
-from fastapi import APIRouter, Response, Depends
+from fastapi import APIRouter, Response, Depends, Request
 from lib.jwt import get_current_account
 from schema.cctv_schema import CCTVCreate
-from schema.account_schema import AccountModel, ProfileModel, RegisterProfile
+from schema.account_schema import AccountModel, ProfileModel, RegisterProfile, UpdateProfileModel
 import services.main_service as Services
 import services.cctv_service as CCTVService
 import services.account_service as AccountService
@@ -10,8 +10,12 @@ router = APIRouter()
 
 # Users Data
 @router.get("/users")
-async def all_users(account= Depends(get_current_account)):
+async def all_users(account = Depends(get_current_account)):
     return await Services.get_all_users()
+
+@router.patch("/users/{id}")
+async def update_user(id,body : UpdateProfileModel, request: Request, account = Depends(get_current_account)):
+    return await Services.update_selected_users(id,body, request)
 
 # Authentication Router
 @router.post("/account/login")
@@ -47,16 +51,16 @@ async def get_camera_list(account = Depends(get_current_account)):
     return await CCTVService.get_camera_service()
 
 @router.post("/cctvs", summary="Menambahkan cctv baru ke sistem")
-async def  add_camera(body : CCTVCreate, account=Depends(get_current_account)):
-    return  await CCTVService.create_camera_service(body)
+async def  add_camera(body : CCTVCreate, request: Request,account=Depends(get_current_account)):
+    return  await CCTVService.create_camera_service(body,request)
 
 @router.get("/cctvs/{id}", summary="Melihat detail dari cctv")
 async def  get_detail_camera(id,account=Depends(get_current_account)):
     return  await CCTVService.get_camera_detail(id)
 
 @router.delete("/cctvs/{id}")
-async def  delete_camera_id(id, account=Depends(get_current_account)):
-    return await CCTVService.delete_camera_id(id)
+async def  delete_camera_id(id, request: Request,account=Depends(get_current_account)):
+    return await CCTVService.delete_camera_id(id, request)
 
 # Komunikasi web-socket
 @router.websocket("/ws/camera")

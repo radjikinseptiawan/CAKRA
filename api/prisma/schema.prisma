@@ -30,12 +30,13 @@ model Accounts {
 }
 
 model Profile {
-  profile_id String   @id @default(uuid())
-  account_id String   @unique
-  fullname   String
-  role       Role
-  email      String
-  account    Accounts @relation(fields: [account_id], references: [account_id])
+  profile_id   String   @id @default(uuid())
+  account_id   String   @unique
+  number_phone String
+  fullname     String
+  role         Role     @default(VISITOR)
+  email        String
+  account      Accounts @relation(fields: [account_id], references: [account_id])
 }
 
 enum Role {

@@ -13,6 +13,7 @@ export default function EmployeeControllers() {
           onClick={() => router.push("?dialogs=add")}
           variant="contained"
           color="success"
+          disabled
         >
           <KeyIcon className="mx-1" />
           Tambah Hak Akses

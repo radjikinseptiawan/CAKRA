@@ -1,8 +1,11 @@
+from os import getenv
+from jose import jwt
 from lib.db import db
 from datetime import timezone, datetime
 from fastapi import HTTPException, status
 import httpx
 
+SECRET_KEY = getenv("SECRET_JWT")
 
 # Mengambil semua camera CCTB
 async def get_camera_service():
@@ -18,7 +21,19 @@ async def get_camera_service():
 
 
 # Menambahkan camera CCTV baru
-async def create_camera_service(body):
+async def create_camera_service(body,request):
+    cookie = request.cookie.get("access_token")
+
+    if cookie is None:
+        raise HTTPException(detail="Cookie tidak tersedia!", status_code=status.HTTP_404_NOT_FOUND)
+
+    data = jwt.decode(key=SECRET_KEY, token=cookie,algorithms=["HS256"])
+
+    role = data["role"]
+
+    if role != "STAFF" or role != "OWNER":
+        raise HTTPException(detail="Acess denied", status_code=status.HTTP_403_FORBIDDEN)
+    
     try:
         payload = {
             "camera_name" : body.camera_name,
@@ -60,7 +75,20 @@ async def get_camera_detail(id):
     except httpx.RequestError as error:
         raise error
 
-async def delete_camera_id(id):
+async def delete_camera_id(id, request):
+
+    cookie = request.cookie.get("access_token")
+
+    if cookie is None:
+        raise HTTPException(detail="Cookie tidak tersedia!", status_code=status.HTTP_404_NOT_FOUND)
+
+    data = jwt.decode(key=SECRET_KEY, token=cookie,algorithms=["HS256"])
+
+    role = data["role"]
+
+    if role != "STAFF" or role != "OWNER":
+        raise HTTPException(detail="Acess denied", status_code=status.HTTP_403_FORBIDDEN)
+    
     try:
         psql = await db.ccvtv.delete(where={"cctv_id" : id})
         

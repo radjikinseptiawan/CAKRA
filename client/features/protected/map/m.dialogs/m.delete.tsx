@@ -1,3 +1,4 @@
+import { useTokenJWT } from "@/context/user.context";
 import { deleteCamera } from "@/services/maps.service";
 import {
   Alert,
@@ -7,13 +8,15 @@ import {
   DialogContent,
   DialogTitle,
 } from "@mui/material";
-import { AlertCircleIcon } from "lucide-react";
+import { AlertCircleIcon, XCircleIcon } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 export default function MapsDialogDelete() {
   const router = useRouter();
   const confirmation = useSearchParams().get("confirmation");
   const pathname = usePathname();
+  const user = useTokenJWT();
+
   const id = useSearchParams().get("id");
   const deleteCameraCCTV = async () => {
     if (!id) return null;
@@ -23,23 +26,54 @@ export default function MapsDialogDelete() {
   };
 
   return (
-    <Dialog className="px-2" open={confirmation ? true : false}>
-      <DialogTitle className="font-bold text-green-600">
-        Kamu serius?
-      </DialogTitle>
-      <hr className="text-green-500 mx-5" />
-      <DialogContent>
-        Kamera CCTV akan terhapus dari sistem kami, namun kamu tetap dapat
-        mendaftarkan nya kembali dimasa mendatang
-      </DialogContent>
-      <DialogActions>
-        <Button color="success" onClick={() => router.back()}>
-          Batal
-        </Button>
-        <Button onClick={deleteCameraCCTV} variant="contained" color="error">
-          Ya
-        </Button>
-      </DialogActions>
-    </Dialog>
+    <>
+      {user && user.role !== "VISITOR" ? (
+        <Dialog className="px-2" open={confirmation ? true : false}>
+          <DialogTitle className="font-bold text-green-600">
+            Kamu serius?
+          </DialogTitle>
+          <hr className="text-green-500 mx-5" />
+          <DialogContent>
+            Kamera CCTV akan terhapus dari sistem kami, namun kamu tetap dapat
+            mendaftarkan nya kembali dimasa mendatang
+          </DialogContent>
+          <DialogActions>
+            <Button color="success" onClick={() => router.back()}>
+              Batal
+            </Button>
+            <Button
+              onClick={deleteCameraCCTV}
+              variant="contained"
+              color="error"
+            >
+              Ya
+            </Button>
+          </DialogActions>
+        </Dialog>
+      ) : (
+        <Dialog
+          open={confirmation ? true : false}
+          className="px-3"
+          onClose={() => router.back()}
+        >
+          <DialogTitle className="text-red-600 flex gap-x-2 items-center">
+            {" "}
+            <XCircleIcon /> Akses Ditolak
+          </DialogTitle>
+          <hr className="text-red-600 mx-4" />
+          <DialogContent>
+            <p>
+              Kamu tidak memilki akses untuk fitur ini, hubungi STAFF atau OWNER
+              untuk bantuan
+            </p>
+          </DialogContent>
+          <DialogActions>
+            <Button color="error" onClick={() => router.back()}>
+              Tutup
+            </Button>
+          </DialogActions>
+        </Dialog>
+      )}
+    </>
   );
 }

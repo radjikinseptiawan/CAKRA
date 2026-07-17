@@ -1,4 +1,5 @@
 import asyncio
+import bcrypt
 from datetime import datetime  # <-- Tambahkan ini untuk mengatasi error created_at
 from prisma import Prisma
 
@@ -9,6 +10,8 @@ async def main() -> None:
     
     # Menghapus data lama
     await db.ccvtv.delete_many()
+    await db.profile.delete_many()
+    await db.accounts.delete_many()
 
     bekasi_cctv = [
         {
@@ -44,8 +47,8 @@ async def main() -> None:
             "category": "PUBLIC",
             "latitude": -6.232512,
             "longitude": 107.001245,
-            "source_url": "https://eofficev2.bekasikota.go.id/backupcctv/m3/Depan_SMP_Strada_Budi_luhur_1784303106_299.ts",
-            "converted_url": "https://eofficev2.bekasikota.go.id/backupcctv/m3/Depan_SMP_Strada_Budi_luhur_1784303106_299.ts"
+            "source_url": "https://eofficev2.bekasikota.go.id/backupcctv/m3/Depan_SMP_Strada_Budi_luhur.m3u8",
+            "converted_url": "https://eofficev2.bekasikota.go.id/backupcctv/m3/Depan_SMP_Strada_Budi_luhur.m3u8"
         },
         {
             "camera_name": "Flyover Cipendewa",
@@ -53,8 +56,8 @@ async def main() -> None:
             "category": "PUBLIC",
             "latitude": -6.291243,
             "longitude": 106.995874,
-            "source_url": "https://eofficev2.bekasikota.go.id/backupcctv/m3/Flyover_Cipendawa_1784303106_310.ts",
-            "converted_url": "https://eofficev2.bekasikota.go.id/backupcctv/m3/Flyover_Cipendawa_1784303106_310.ts",
+            "source_url": "https://eofficev2.bekasikota.go.id/backupcctv/m3/Flyover_Cipendawa.m3u8",
+            "converted_url": "https://eofficev2.bekasikota.go.id/backupcctv/m3/Flyover_Cipendawa.m3u8",
         },
         {
             "camera_name": "KFC dekat Taman Cut Mutia",
@@ -89,8 +92,8 @@ async def main() -> None:
             "category": "PUBLIC",
             "latitude": -6.252415,
             "longitude": 107.014523,
-            "source_url": "https://eofficev2.bekasikota.go.id/backupcctv/m3/Perempatan_Rawa_Semut_1784303106_364.ts",
-            "converted_url": "https://eofficev2.bekasikota.go.id/backupcctv/m3/Perempatan_Rawa_Semut_1784303106_364.ts",
+            "source_url": "https://eofficev2.bekasikota.go.id/backupcctv/m3/Perempatan_Rawa_Semut.m3u8",
+            "converted_url": "https://eofficev2.bekasikota.go.id/backupcctv/m3/Perempatan_Rawa_Semut.m3u8",
         },
         {
             "camera_name": "Putaran Sumber Arta",
@@ -107,8 +110,8 @@ async def main() -> None:
             "category": "PUBLIC",
             "latitude": -6.243124,
             "longitude": 106.991842,
-            "source_url": "https://eofficev2.bekasikota.go.id/backupcctv/m3/Samping_RS_Mitra_Keluarga_1784303106_382.ts",
-            "converted_url": "https://eofficev2.bekasikota.go.id/backupcctv/m3/Samping_RS_Mitra_Keluarga_1784303106_382.ts",
+            "source_url": "https://eofficev2.bekasikota.go.id/backupcctv/m3/Samping_RS_Mitra_Keluarga.m3u8",
+            "converted_url": "https://eofficev2.bekasikota.go.id/backupcctv/m3/Samping_RS_Mitra_Keluarga.m3u8",
         },
         {
             "camera_name": "Samping RS Primaya Bekasi",
@@ -116,8 +119,8 @@ async def main() -> None:
             "category": "PUBLIC",
             "latitude": -6.244315,
             "longitude": 106.977412,
-            "source_url": "https://eofficev2.bekasikota.go.id/backupcctv/m3/Samping_RS_Primaya_Bekasi_1784303106_404.ts",
-            "converted_url": "https://eofficev2.bekasikota.go.id/backupcctv/m3/Samping_RS_Primaya_Bekasi_1784303106_404.ts",
+            "source_url": "https://eofficev2.bekasikota.go.id/backupcctv/m3/Samping_RS_Primaya_Bekasi.m3u8",
+            "converted_url": "https://eofficev2.bekasikota.go.id/backupcctv/m3/Samping_RS_Primaya_Bekasi.m3u8",
         },
         {
             "camera_name": "Seberang Yonif 202",
@@ -206,6 +209,26 @@ async def main() -> None:
     
     current_time = datetime.now()
     
+
+    hash_password = bcrypt.hashpw("123".encode("utf-8"),bcrypt.gensalt()).decode("utf-8")
+
+    account = {
+        "username" : "admin",
+        "password" : hash_password,
+    }
+
+    account = await db.accounts.create(data=account)
+
+    profile = {
+        "account_id" : account.account_id,
+        "fullname" : "Administrator",
+        "number_phone" : "+62123456",
+        "email" : "admin@gmail.com",\
+        "role" : "OWNER"
+    }
+
+    await db.profile.create(data=profile)
+
     for cctv in bekasi_cctv:
         # Menyuntikkan nilai dummy waktu langsung ke dict objek sebelum create
         cctv["created_at"] = current_time

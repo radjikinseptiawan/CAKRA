@@ -1,4 +1,5 @@
 import { CameraSchema } from "@/@types/camera.type";
+import { useTokenJWT } from "@/context/user.context";
 import { getDetailCamera } from "@/services/maps.service";
 import {
   Button,
@@ -9,7 +10,7 @@ import {
   Typography,
 } from "@mui/material";
 import axios from "axios";
-import { Trash } from "lucide-react";
+import { Trash, XCircleIcon } from "lucide-react";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -19,6 +20,8 @@ export default function MapsDialogsShow() {
   const router = useRouter();
   const pathname = usePathname();
   const [selectedCamera, setSelectedCamera] = useState<CameraSchema>();
+
+  const user = useTokenJWT();
 
   const getDetailCameras = async () => {
     if (!id) return null;
@@ -66,6 +69,7 @@ export default function MapsDialogsShow() {
             router.push(`?confirmation=delete&id=${selectedCamera?.cctv_id}`)
           }
           size="small"
+          disabled={user?.role == "VISITOR" ? true : false}
           className="flex items-center gap-x-4"
           variant="contained"
           color="error"

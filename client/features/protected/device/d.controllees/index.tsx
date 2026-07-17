@@ -1,4 +1,5 @@
 import { useMapProvider } from "@/context/map.context";
+import { useTokenJWT } from "@/context/user.context";
 import { Button, Paper } from "@mui/material";
 import { CctvIcon } from "lucide-react";
 import { useEffect } from "react";
@@ -6,6 +7,7 @@ import { useEffect } from "react";
 export default function DeviceControllers() {
   const { setIsOpen, selectedCoordinat, setSelectedCoordinat } =
     useMapProvider();
+  const user = useTokenJWT();
 
   const addCamera = () => {
     const maps = navigator.geolocation.getCurrentPosition((position) => {
@@ -36,6 +38,7 @@ export default function DeviceControllers() {
         <Button
           onClick={addCamera}
           variant="contained"
+          disabled={user?.role == "VISITOR" ? true : false}
           color="success"
           className="flex gap-x-2   items-center"
         >

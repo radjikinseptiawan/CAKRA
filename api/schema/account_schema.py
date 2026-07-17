@@ -8,6 +8,9 @@ class ProfileModel(BaseModel):
     fullname : str = Field(None)
     role : str = Field(default="VISITOR")
     email : str = Field(...)
+    number_phone : str = Field(...)
     
+class UpdateProfileModel(BaseModel):
+    role: str = Field(...)    
 class RegisterProfile(ProfileModel,AccountModel):
     pass 

@@ -17,6 +17,7 @@
     "@mui/material-nextjs": "^9.1.1",
     "@mui/x-charts": "^9.9.0",
     "axios": "^1.18.1",
+    "jose": "^6.2.3",
     "leaflet": "^1.9.4",
     "lucide": "^1.24.0",
     "lucide-react": "^1.24.0",

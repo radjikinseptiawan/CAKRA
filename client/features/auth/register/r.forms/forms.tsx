@@ -4,6 +4,7 @@ import Link from "next/link";
 import useRegisterForm from "../r.hooks";
 import { registerService } from "@/services/accounts.service";
 import { useRouter } from "next/navigation";
+import { useTokenJWT } from "@/context/user.context";
 
 export default function RegisterForms() {
   const {
@@ -14,6 +15,7 @@ export default function RegisterForms() {
   } = useRegisterForm();
   const router = useRouter();
   const payload = async (data: any) => {
+    console.log(data);
     const response = await registerService(data);
     if (!response) {
       alert("Gagal mendaftarkan akun");
@@ -34,6 +36,7 @@ export default function RegisterForms() {
           })}
           label="Username"
           autoComplete="off"
+          autoCorrect="off"
           size="small"
           placeholder="johndoe"
           color="success"
@@ -57,10 +60,11 @@ export default function RegisterForms() {
             },
           })}
           autoComplete="off"
+          autoCorrect="off"
           label="Email"
           size="small"
           placeholder="johndoe@gmail.com"
-          type="text"
+          type="email"
           color="success"
           slotProps={{
             input: {
@@ -75,9 +79,35 @@ export default function RegisterForms() {
 
       <div className="text-start">
         <TextField
+          {...register("number_phone", {
+            onChange: (e) => {
+              e.target.value = e.target.value.toLowerCase();
+            },
+          })}
+          autoComplete="off"
+          autoCorrect="off"
+          label="Nomor Telepon"
+          size="small"
+          placeholder="+62812345678"
+          type="text"
+          color="success"
+          slotProps={{
+            input: {
+              style: { textTransform: "lowercase" },
+            },
+          }}
+        />
+        {errors && (
+          <p className="text-sm text-red-500">{errors.number_phone?.message}</p>
+        )}
+      </div>
+
+      <div className="text-start">
+        <TextField
           {...register("fullname")}
           autoComplete="off"
           label="Nama Lengkap"
+          autoCorrect="off"
           size="small"
           color="success"
           placeholder="John Doe"
@@ -93,6 +123,7 @@ export default function RegisterForms() {
           {...register("password")}
           label="Password"
           size="small"
+          autoCorrect="off"
           placeholder="*****"
           color="success"
           autoComplete="off"

@@ -13,6 +13,10 @@ export const RegisterAccountSchema = z
       .transform((val) => val.toLowerCase()),
     fullname: z.string().min(1, "Nama Lengkap Wajib diisi!"),
     confirm_password: z.string().min(1, "Konfirmasi password wajib diisi!"),
+    number_phone: z
+      .string()
+      .min(1, "Nomor telepon wajib diisi!")
+      .regex(/^\+62\d{8,15}$/, "Nomor telepon harus diawali +62"),
   })
   .refine((data) => data.password == data.confirm_password, {
     message: "Password dan konfirmasi password tidak cocok!",

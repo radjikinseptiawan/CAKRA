@@ -11,7 +11,7 @@ async def sign_in_account(body, response: Response):
             "password" : body.password
         }
 
-        get_accounts = await db.accounts.find_first(where={"username": sign_in_payload["username"]})
+        get_accounts = await db.accounts.find_first(where={"username": sign_in_payload["username"]},include={"Profile" : True})
 
         if not get_accounts:
             raise HTTPException(
@@ -32,7 +32,8 @@ async def sign_in_account(body, response: Response):
 
         token = create_access_token({
             "id" : get_accounts.account_id,
-            "username": get_accounts.username
+            "username": get_accounts.username,
+            "role" : get_accounts.Profile.role
         })
         
         response.set_cookie(
@@ -68,6 +69,7 @@ async def create_account(body):
             "email" : body.email,
             "fullname" : body.fullname,
             "role":body.role,
+            "number_phone": body.number_phone,
             "account_id": account_request.account_id
         }
 

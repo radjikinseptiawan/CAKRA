@@ -3,6 +3,7 @@ export type AccountProfileSchema = {
   password: string;
   email: string;
   fullname: string;
+  number_phone: string;
   confirm_password: string;
 };
 
