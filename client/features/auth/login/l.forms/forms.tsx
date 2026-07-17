@@ -30,6 +30,7 @@ export default function LoginForms() {
           label="Username"
           size="small"
           color="success"
+          autoComplete="off"
           {...register("username", {
             onChange: (e) => {
               e.target.value = e.target.value.toLowerCase();
@@ -52,6 +53,7 @@ export default function LoginForms() {
       <div>
         <TextField
           color="success"
+          autoComplete="off"
           type="password"
           label="Password"
           size="small"

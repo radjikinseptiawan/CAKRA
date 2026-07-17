@@ -112,22 +112,6 @@ export default function Maps() {
         popupContent.className =
           "p-2 text-gray-800 w-[260px] flex flex-col gap-y-2";
 
-        const videoWrapper = document.createElement("div");
-        videoWrapper.className =
-          "w-full aspect-video bg-black rounded-md overflow-hidden flex items-center justify-center shadow-inner relative group";
-
-        const videoEl = document.createElement("video");
-        videoEl.className = "w-full h-full object-cover";
-        videoEl.controls = false;
-        videoEl.playsInline = true;
-        videoEl.muted = true;
-        videoEl.autoplay = true;
-
-        videoEl.src = cam.stream_url;
-
-        videoWrapper.appendChild(videoEl);
-        popupContent.appendChild(videoWrapper);
-
         const textContainer = document.createElement("div");
         textContainer.className = "flex flex-col gap-y-0.5 text-left px-0.5";
 

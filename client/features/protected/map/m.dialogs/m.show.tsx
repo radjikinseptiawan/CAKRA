@@ -10,13 +10,14 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import { Trash } from "lucide-react";
-import { useSearchParams } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function MapsDialogsShow() {
   const id = useSearchParams().get("id");
   const router = useRouter();
+  const pathname = usePathname();
   const [selectedCamera, setSelectedCamera] = useState<CameraSchema>();
 
   const getDetailCameras = async () => {
@@ -43,7 +44,7 @@ export default function MapsDialogsShow() {
               playsInline
               autoPlay
               muted
-              src={selectedCamera.stream_url}
+              src={selectedCamera.source_url}
             />
           ) : (
             <div className="bg-black"></div>
@@ -56,7 +57,7 @@ export default function MapsDialogsShow() {
           size="small"
           variant="outlined"
           color="success"
-          onClick={() => router.back()}
+          onClick={() => router.replace(pathname)}
         >
           Close
         </Button>

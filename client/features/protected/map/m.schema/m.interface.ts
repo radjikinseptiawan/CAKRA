@@ -5,7 +5,7 @@ const ipv4Regex =
 
 export const MapsAddCameraSchema = z.object({
   camera_name: z.string().min(1, "Nama camera wajib di isi!"),
-  stream_url: z.string().min(1, "URL stream wajib di isi!"),
+  source_url: z.string().min(1, "URL stream wajib di isi!"),
   latitude: z.float64(),
   longitude: z.float64(),
   location_description: z.string().min(1, "Nama camera wajib di isi!"),

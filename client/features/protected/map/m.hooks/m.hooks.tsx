@@ -10,7 +10,7 @@ export const useCameraForms = () => {
       latitude: 0,
       longitude: 0,
       location_description: "",
-      stream_url: "",
+      source_url: "",
     },
   });
 };

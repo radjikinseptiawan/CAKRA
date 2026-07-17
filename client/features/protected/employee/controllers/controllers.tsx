@@ -8,14 +8,13 @@ export default function EmployeeControllers() {
   return (
     <div className="py-15 px-5">
       <h1 className="text-black font-bold text-md md:text-xl">Hak Akses</h1>
-      <div>
+      <div className="my-4">
         <Button
           onClick={() => router.push("?dialogs=add")}
           variant="contained"
           color="success"
-          className="flex gap-x-2   items-center"
         >
-          <KeyIcon />
+          <KeyIcon className="mx-1" />
           Tambah Hak Akses
         </Button>
       </div>

@@ -70,11 +70,11 @@ export default function MapsForms() {
           autoComplete="off"
           autoCorrect="off"
           color="success"
-          {...register("stream_url")}
+          {...register("source_url")}
         />
         {errors && (
           <p className="text-[12px] text-red-400">
-            {errors.stream_url?.message}
+            {errors.source_url?.message}
           </p>
         )}
       </div>
