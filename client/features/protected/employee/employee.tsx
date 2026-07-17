@@ -5,7 +5,7 @@ import TableEmployee from "./table/table";
 
 export default function EmployeeFeatures() {
   return (
-    <Container className="my-4 w-full">
+    <Container className="px-5 py-15">
       <EmployeeControllers />
       <TableEmployee />
       <EmployeeAddDialog />
