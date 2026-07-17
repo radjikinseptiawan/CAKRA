@@ -13,7 +13,15 @@ import {
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { ReactNode, useState } from "react";
 import Link from "next/link";
-import { Fab } from "@mui/material";
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Fab,
+} from "@mui/material";
+import { logoutService } from "@/services/accounts.service";
 
 const navigation = [
   {
@@ -73,7 +81,7 @@ export default function Sidebar({
       {children}
 
       <div
-        className={`fixed top-0 right-0 z-55 h-screen w-96 overflow-visible transition-transform duration-300 ease-in-out ${
+        className={`fixed top-0 right-0 z-54 mt-4 h-screen w-96 overflow-visible transition-transform duration-300 ease-in-out ${
           isOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
@@ -86,8 +94,8 @@ export default function Sidebar({
                   key={index}
                   href={item.href}
                   className={`${
-                    isActive ? "bg-blue-600/30" : ""
-                  } flex items-center gap-x-2 text-blue-600 hover:bg-gray-100 px-2 py-3 my-1 rounded-md cursor-pointer`}
+                    isActive ? "bg-green-600/30" : ""
+                  } flex items-center gap-x-2 text-green-600 hover:bg-gray-100 px-2 py-3 my-1 rounded-md cursor-pointer`}
                 >
                   {item.icon}
                   <span>{item.name}</span>
@@ -95,7 +103,8 @@ export default function Sidebar({
               );
             })}
             <button
-              className={`flex items-center w-full gap-x-2 text-blue-600 hover:bg-gray-100 px-2 py-3 my-1 rounded-md cursor-pointer`}
+              onClick={() => router.push("?action=logout")}
+              className={`flex items-center w-full gap-x-2 text-green-600 hover:bg-gray-100 px-2 py-3 my-1 rounded-md cursor-pointer`}
             >
               <LogOut />
               <span>Logout</span>
@@ -105,12 +114,45 @@ export default function Sidebar({
       </div>
 
       <Fab
-        color="primary"
+        color="success"
         onClick={closeSlide}
         className="!fixed bottom-10 right-4 !z-[60]"
       >
         {isOpen ? <SquareArrowOutDownLeft /> : <SquareArrowOutUpRight />}
       </Fab>
+
+      <SignOutDialog />
     </>
   );
 }
+
+export const SignOutDialog = () => {
+  const action = useSearchParams().get("action");
+  const router = useRouter();
+
+  const signOutService = async () => {
+    const response = await logoutService();
+    if (!response) return null;
+    router.push("/");
+  };
+  return (
+    <Dialog className="px-2" open={action ? true : false}>
+      <DialogTitle className="font-bold text-green-600">
+        Kamu serius?
+      </DialogTitle>
+      <hr className="text-green-500 mx-5" />
+      <DialogContent>
+        Aksi ini akan membuat kamu keluar dari halaman, dan perlu login kembali
+        untuk mengakses nya
+      </DialogContent>
+      <DialogActions>
+        <Button color="success" onClick={() => router.back()}>
+          Batal
+        </Button>
+        <Button onClick={signOutService} variant="contained" color="error">
+          Ya
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+};

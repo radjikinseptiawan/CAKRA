@@ -21,19 +21,12 @@ export default function Maps() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const getViolenceData = async () => {
-    const response = await getViolence();
-    const convertData = groupByKabupaten(response.data as RawEntry[]);
-    setDaerah(convertData);
-  };
-
   const getAllCamerasData = async () => {
     const response = await getAllCamera();
     setCameras(response);
   };
 
   useEffect(() => {
-    getViolenceData();
     getAllCamerasData();
   }, []);
 
@@ -104,7 +97,7 @@ export default function Maps() {
 
     const cctvIcon = L.divIcon({
       html: `
-      <div class="flex items-center justify-center w-8 h-8 bg-blue-600 rounded-full border-2 border-white shadow-lg transform -translate-y-1/2">
+      <div class="flex items-center justify-center w-8 h-8 bg-green-600 rounded-full border-2 border-white shadow-lg transform -translate-y-1/2">
         ${cctvSvgString}
       </div>
     `,
@@ -158,7 +151,7 @@ export default function Maps() {
         const button = document.createElement("button");
         button.innerText = "Lihat Detail";
         button.className =
-          "bg-blue-600 px-2 py-1 font-bold text-white rounded-md cursor-pointer";
+          "bg-green-600 px-2 py-1 font-bold text-white rounded-md cursor-pointer";
 
         button.addEventListener("click", () => {
           router.push(`?id=${cam.cctv_id}`);
@@ -172,5 +165,5 @@ export default function Maps() {
     });
   }, [cameras]);
 
-  return <div ref={mapRef} className="w-full h-screen z-48" />;
+  return <div ref={mapRef} className="w-full h-screen mt-4 z-48" />;
 }

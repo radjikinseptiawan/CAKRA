@@ -26,7 +26,9 @@ export const loginService = async (body: LoginSchema) => {
 
 export const logoutService = async () => {
   try {
-    const response = await axios.delete(`${BASE_URL}/account/logout`);
+    const response = await axios.delete(`${BASE_URL}/account/logout`, {
+      withCredentials: true,
+    });
     const result = response;
     return result;
   } catch (error) {

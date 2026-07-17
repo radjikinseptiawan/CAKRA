@@ -55,7 +55,7 @@ export default function MapsDialogsShow() {
         <Button
           size="small"
           variant="outlined"
-          color="info"
+          color="success"
           onClick={() => router.back()}
         >
           Close

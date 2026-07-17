@@ -23,7 +23,9 @@ export const getViolence = async () => {
  */
 export const addCamera = async (payload: CameraSchema) => {
   try {
-    const response = await axios.post(`${BASE_URL}/cctvs`, payload);
+    const response = await axios.post(`${BASE_URL}/cctvs`, payload, {
+      withCredentials: true,
+    });
     const results = response.data;
     return results;
   } catch (error) {
@@ -37,7 +39,9 @@ export const addCamera = async (payload: CameraSchema) => {
  */
 export const getAllCamera = async () => {
   try {
-    const response = await axios.get(`${BASE_URL}/cctvs`);
+    const response = await axios.get(`${BASE_URL}/cctvs`, {
+      withCredentials: true,
+    });
     const results = response.data;
     return results;
   } catch (error) {
@@ -47,7 +51,9 @@ export const getAllCamera = async () => {
 
 export const getDetailCamera = async (id: string) => {
   try {
-    const response = await axios.get(`${BASE_URL}/cctvs/${id}`);
+    const response = await axios.get(`${BASE_URL}/cctvs/${id}`, {
+      withCredentials: true,
+    });
     const results = response.data;
     return results;
   } catch (error) {
@@ -57,7 +63,9 @@ export const getDetailCamera = async (id: string) => {
 
 export const deleteCamera = async (id: string) => {
   try {
-    const response = await axios.delete(`${BASE_URL}/cctvs/${id}`);
+    const response = await axios.delete(`${BASE_URL}/cctvs/${id}`, {
+      withCredentials: true,
+    });
     const results = response.data;
     return results;
   } catch (error) {

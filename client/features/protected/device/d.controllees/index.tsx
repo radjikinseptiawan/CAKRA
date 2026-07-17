@@ -36,6 +36,7 @@ export default function DeviceControllers() {
         <Button
           onClick={addCamera}
           variant="contained"
+          color="success"
           className="flex gap-x-2   items-center"
         >
           <CctvIcon />

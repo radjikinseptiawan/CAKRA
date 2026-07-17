@@ -24,14 +24,18 @@ export default function MapsDialogDelete() {
 
   return (
     <Dialog className="px-2" open={confirmation ? true : false}>
-      <DialogTitle>Kamu serius?</DialogTitle>
-      <hr className="text-gray-500 mx-5" />
+      <DialogTitle className="font-bold text-green-600">
+        Kamu serius?
+      </DialogTitle>
+      <hr className="text-green-500 mx-5" />
       <DialogContent>
         Kamera CCTV akan terhapus dari sistem kami, namun kamu tetap dapat
         mendaftarkan nya kembali dimasa mendatang
       </DialogContent>
       <DialogActions>
-        <Button onClick={() => router.back()}>Batal</Button>
+        <Button color="success" onClick={() => router.back()}>
+          Batal
+        </Button>
         <Button onClick={deleteCameraCCTV} variant="contained" color="error">
           Ya
         </Button>

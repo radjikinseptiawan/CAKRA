@@ -36,6 +36,7 @@ export default function RegisterForms() {
           autoComplete="off"
           size="small"
           placeholder="johndoe"
+          color="success"
           type="text"
           slotProps={{
             input: {
@@ -60,6 +61,7 @@ export default function RegisterForms() {
           size="small"
           placeholder="johndoe@gmail.com"
           type="text"
+          color="success"
           slotProps={{
             input: {
               style: { textTransform: "lowercase" },
@@ -77,6 +79,7 @@ export default function RegisterForms() {
           autoComplete="off"
           label="Nama Lengkap"
           size="small"
+          color="success"
           placeholder="John Doe"
           type="text"
         />
@@ -91,6 +94,7 @@ export default function RegisterForms() {
           label="Password"
           size="small"
           placeholder="*****"
+          color="success"
           autoComplete="off"
           type="password"
         />
@@ -100,6 +104,7 @@ export default function RegisterForms() {
       </div>
       <div className="text-start">
         <TextField
+          color="success"
           {...register("confirm_password")}
           type="password"
           autoComplete="off"
@@ -113,11 +118,11 @@ export default function RegisterForms() {
           </p>
         )}
       </div>
-      <Button type="submit" variant="contained" size="small">
+      <Button type="submit" color="success" variant="contained" size="small">
         Daftar
       </Button>
       <Link href={"/login"}>
-        Sudah punya akun? <span className="text-blue-500">klik disini</span>
+        Sudah punya akun? <span className="text-green-500">klik disini</span>
       </Link>
     </form>
   );

@@ -53,6 +53,7 @@ export default function MapsForms() {
         <FormLabel>Nama Camera</FormLabel>
         <Input
           autoComplete="off"
+          color="success"
           autoCorrect="off"
           {...register("camera_name")}
         />
@@ -68,6 +69,7 @@ export default function MapsForms() {
         <Input
           autoComplete="off"
           autoCorrect="off"
+          color="success"
           {...register("stream_url")}
         />
         {errors && (
@@ -82,6 +84,8 @@ export default function MapsForms() {
           <FormLabel>Latitude</FormLabel>
           <Input
             autoComplete="off"
+            color="success"
+            readOnly
             autoCorrect="off"
             {...register("latitude", { valueAsNumber: true })}
           />
@@ -94,6 +98,8 @@ export default function MapsForms() {
         <div className="flex flex-col">
           <FormLabel>Longitude</FormLabel>
           <Input
+            readOnly
+            color="success"
             autoComplete="off"
             autoCorrect="off"
             {...register("longitude", { valueAsNumber: true })}
@@ -109,6 +115,7 @@ export default function MapsForms() {
       <div className="flex flex-col">
         <FormLabel>Deskripsi Lokasi</FormLabel>
         <Input
+          color="success"
           autoComplete="off"
           autoCorrect="off"
           type="text"
@@ -123,6 +130,7 @@ export default function MapsForms() {
       <div className="flex flex-col">
         <FormLabel>Kategori</FormLabel>
         <select
+          className="border-b-green-600 py-2 border-b-2"
           onChange={(e) => setCategoryCamera(e.target.value)}
           value={categoryCamera}
         >
@@ -131,10 +139,10 @@ export default function MapsForms() {
         </select>
       </div>
       <DialogActions>
-        <Button onClick={closeDialogs} type="button">
+        <Button color="success" onClick={closeDialogs} type="button">
           Close
         </Button>
-        <Button variant="contained" type="submit">
+        <Button variant="contained" color="success" type="submit">
           Add Camera
         </Button>
       </DialogActions>

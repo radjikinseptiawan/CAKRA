@@ -1,9 +1,11 @@
-import { Button } from "@mui/material";
-import { CctvIcon, KeyIcon } from "lucide-react";
+import EmployeeControllers from "./controllerts/index.controllers";
+import EmployeeAddDialog from "./dialogs/e.add";
 
 export default function EmployeeFeatures() {
   return (
-    <div className="px-3 py-2">
+    <div className="my-4">
+      <EmployeeControllers />
+      <EmployeeAddDialog />
     </div>
   );
 }

@@ -29,6 +29,7 @@ export default function LoginForms() {
         <TextField
           label="Username"
           size="small"
+          color="success"
           {...register("username", {
             onChange: (e) => {
               e.target.value = e.target.value.toLowerCase();
@@ -50,6 +51,7 @@ export default function LoginForms() {
       </div>
       <div>
         <TextField
+          color="success"
           type="password"
           label="Password"
           size="small"
@@ -61,12 +63,12 @@ export default function LoginForms() {
           </p>
         )}
       </div>
-      <Button type="submit" variant="contained" size="small">
+      <Button type="submit" variant="contained" color="success" size="small">
         Masuk
       </Button>
 
       <Link href={"/register"}>
-        Belum punya akun? <span className="text-blue-500">klik disini</span>
+        Belum punya akun? <span className="text-green-500">klik disini</span>
       </Link>
     </form>
   );

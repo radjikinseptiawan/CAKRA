@@ -34,8 +34,8 @@ async def sign_in_account(body, response: Response):
             "id" : get_accounts.account_id,
             "username": get_accounts.username
         })
-
-        cookie = response.set_cookie(
+        
+        response.set_cookie(
                 key="access_token",
                 value=token,
                 httponly=True,
@@ -48,7 +48,6 @@ async def sign_in_account(body, response: Response):
         
         return {
             "message": "Success to login",
-            "cookie": cookie
         }
     except httpx.HTTPStatusError as error:
         raise error
@@ -91,7 +90,14 @@ async def create_account(body):
 
 async def sign_out_account(response: Response):
     try:
-        response.delete_cookie(key="access_token",path="/",samesite="lax",secure=False)
+        response.delete_cookie(
+                key="access_token",
+                httponly=True,
+                path="/",
+                samesite="lax", # Nanti ini pas production diubah jadi lax, domain nya harus sama!
+                secure=False
+)
+
         return {
             "message": "Success to logout"
         }

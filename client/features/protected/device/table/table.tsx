@@ -58,6 +58,7 @@ export default function DeviceTable() {
                   <TableCell>{item.category}</TableCell>
                   <TableCell>
                     <Button
+                      color="success"
                       onClick={(e) => {
                         e.stopPropagation();
                         router.push(`?id=${item.cctv_id}`);
