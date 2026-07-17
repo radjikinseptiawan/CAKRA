@@ -8,7 +8,7 @@ local = getenv("WEB_URL_LOCAL")
 production = getenv("WEB_URL_PRODUCTION")
 
 app = FastAPI()
-origins = [local]
+origins = [local, production]
 
 @app.on_event("startup")
 async def start_up():

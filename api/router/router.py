@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Response
 from schema.cctv_schema import CCTVCreate
 from schema.account_schema import AccountModel, ProfileModel, RegisterProfile
 import services.main_service as Services
@@ -9,12 +9,16 @@ router = APIRouter()
 
 # Authentication Router
 @router.post("/account/login")
-async def sign_in(body : AccountModel):
-    return await AccountService.sign_in_account(body)
+async def sign_in(body : AccountModel, response: Response):
+    return await AccountService.sign_in_account(body, response)
 
 @router.post("/account/register")
 async def create_account(body : RegisterProfile ):
     return await AccountService.create_account(body)
+
+@router.delete("/account/logout")
+async def delete_cookie(response:Response):
+    return await AccountService.sign_out_account(response)
 
 # Data kekerasan dari layanan eksternal & database
 @router.get("/violance")
