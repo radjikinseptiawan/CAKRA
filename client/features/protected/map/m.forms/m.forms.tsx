@@ -1,15 +1,14 @@
+"use client";
 import { useMapProvider } from "@/context/map.context";
-import { Button, DialogActions, FormLabel, Input } from "@mui/material";
+import { Button, DialogActions, FormLabel, Input, Select } from "@mui/material";
 import { useCameraForms } from "../m.hooks/m.hooks";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { addCamera, getAllCamera } from "@/services/maps.service";
-import { CameraCCTVType } from "@/@types/camera.type";
-import { Info } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { CameraSchema } from "@/@types/camera.type";
 
 export default function MapsForms() {
-  const { isOpen, setIsOpen, selectedCoordinat } = useMapProvider();
-  const router = useRouter();
+  const { setIsOpen, selectedCoordinat } = useMapProvider();
+  const [categoryCamera, setCategoryCamera] = useState("PRIVATE");
   const {
     register,
     reset,
@@ -29,10 +28,14 @@ export default function MapsForms() {
     setIsOpen(false);
   };
 
-  const submitform = async (data: CameraCCTVType) => {
+  const submitform = async (data: any) => {
     try {
-      console.log(data);
-      const response = await addCamera(data);
+      const payload: CameraSchema = {
+        ...data,
+        category: categoryCamera,
+      };
+      console.log(payload);
+      const response = await addCamera(payload);
       window.location.reload();
       setIsOpen(false);
       return response;
@@ -116,6 +119,16 @@ export default function MapsForms() {
             {errors.location_description?.message}
           </p>
         )}
+      </div>
+      <div className="flex flex-col">
+        <FormLabel>Kategori</FormLabel>
+        <select
+          onChange={(e) => setCategoryCamera(e.target.value)}
+          value={categoryCamera}
+        >
+          <option value="PRIVATE">Private</option>
+          <option value="PUBLIC">Public</option>
+        </select>
       </div>
       <DialogActions>
         <Button onClick={closeDialogs} type="button">

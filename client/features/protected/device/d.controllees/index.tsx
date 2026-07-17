@@ -19,7 +19,7 @@ export default function DeviceControllers() {
   };
 
   useEffect(() => {
-    const maps = navigator.geolocation.getCurrentPosition((position) => {
+    navigator.geolocation.getCurrentPosition((position) => {
       const lat = position.coords.latitude;
       const lng = position.coords.longitude;
 

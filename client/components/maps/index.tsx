@@ -9,8 +9,8 @@ import { useMapProvider } from "@/context/map.context";
 import { Cctv } from "lucide-react";
 import { renderToString } from "react-dom/server";
 import { ca } from "zod/locales";
-import { CameraCCTVType } from "@/@types/camera.type";
-import { useRouter } from "next/navigation";
+import { CameraSchema } from "@/@types/camera.type";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function Maps() {
   const mapRef = useRef<HTMLDivElement>(null);
@@ -18,12 +18,15 @@ export default function Maps() {
   const { setSelectedCoordinat, setIsOpen } = useMapProvider();
   const { daerah, setDaerah } = useKotaKab();
   const [cameras, setCameras] = useState<[]>([]);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
   const getViolenceData = async () => {
     const response = await getViolence();
     const convertData = groupByKabupaten(response.data as RawEntry[]);
     setDaerah(convertData);
   };
-  const router = useRouter();
+
   const getAllCamerasData = async () => {
     const response = await getAllCamera();
     setCameras(response);
@@ -37,9 +40,16 @@ export default function Maps() {
   useEffect(() => {
     if (!mapRef.current || mapInstanceRef.current) return;
 
+    const indonesiaBounds = L.latLngBounds(
+      L.latLng(-11.5, 94.5),
+      L.latLng(6.5, 141.5),
+    );
+
     const map = L.map(mapRef.current, {
-      center: [-6.231346884462741, 107.24551391595016],
-      zoom: 11,
+      center: [-2.548926, 118.0148634],
+      zoom: 5,
+      maxBounds: indonesiaBounds,
+      minZoom: 5,
       doubleClickZoom: false,
     });
 
@@ -59,6 +69,26 @@ export default function Maps() {
       mapInstanceRef.current = null;
     };
   }, []);
+
+  useEffect(() => {
+    const map = mapInstanceRef.current;
+    if (!map) return;
+
+    const lat = searchParams.get("lat");
+    const lng = searchParams.get("lng");
+
+    if (lat && lng) {
+      const latNum = parseFloat(lat);
+      const lngNum = parseFloat(lng);
+
+      if (!isNaN(latNum) && !isNaN(lngNum)) {
+        map.flyTo([latNum, lngNum], 18, {
+          animate: true,
+          duration: 1.5,
+        });
+      }
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     const map = mapInstanceRef.current;
@@ -83,7 +113,7 @@ export default function Maps() {
       iconAnchor: [16, 32],
     });
 
-    cameras.forEach((cam: CameraCCTVType) => {
+    cameras.forEach((cam: CameraSchema) => {
       if (cam.latitude && cam.longitude) {
         const popupContent = document.createElement("div");
         popupContent.className =

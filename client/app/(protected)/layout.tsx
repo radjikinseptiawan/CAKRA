@@ -4,6 +4,7 @@ import "../globals.css";
 import Sidebar from "../../components/sidebar";
 import ContainerContextClient from "../../context/context";
 import { Suspense } from "react";
+import { AppRouterCacheProvider } from "@mui/material-nextjs/v16-appRouter";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

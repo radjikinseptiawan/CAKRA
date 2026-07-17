@@ -1,4 +1,4 @@
-import { CameraCCTVType } from "@/@types/camera.type";
+import { CameraSchema } from "@/@types/camera.type";
 import { getDetailCamera } from "@/services/maps.service";
 import {
   Button,
@@ -17,7 +17,7 @@ import { useEffect, useState } from "react";
 export default function MapsDialogsShow() {
   const id = useSearchParams().get("id");
   const router = useRouter();
-  const [selectedCamera, setSelectedCamera] = useState<CameraCCTVType>();
+  const [selectedCamera, setSelectedCamera] = useState<CameraSchema>();
 
   const getDetailCameras = async () => {
     if (!id) return null;

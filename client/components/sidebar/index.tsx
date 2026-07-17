@@ -41,11 +41,6 @@ const navigation = [
     name: "Perangkat",
     href: "/device",
   },
-  {
-    icon: <LogOut />,
-    name: "Keluar",
-    href: "/login",
-  },
 ];
 
 export default function Sidebar({
@@ -99,6 +94,12 @@ export default function Sidebar({
                 </Link>
               );
             })}
+            <button
+              className={`flex items-center w-full gap-x-2 text-blue-600 hover:bg-gray-100 px-2 py-3 my-1 rounded-md cursor-pointer`}
+            >
+              <LogOut />
+              <span>Logout</span>
+            </button>
           </div>
         </div>
       </div>
