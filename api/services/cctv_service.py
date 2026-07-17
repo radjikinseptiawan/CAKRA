@@ -22,7 +22,7 @@ async def create_camera_service(body):
     try:
         payload = {
             "camera_name" : body.camera_name,
-            "stream_url" : body.stream_url,
+            "source_url" : body.source_url,
             "latitude" : body.latitude,
             "longitude" : body.longitude,
             "category" : body.category,

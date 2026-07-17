@@ -8,6 +8,11 @@ import services.account_service as AccountService
 
 router = APIRouter()
 
+# Users Data
+@router.get("/users")
+async def all_users(account= Depends(get_current_account)):
+    return await Services.get_all_users()
+
 # Authentication Router
 @router.post("/account/login")
 async def sign_in(body : AccountModel, response: Response):
