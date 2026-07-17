@@ -1,6 +1,7 @@
 "use client";
 import { Button } from "@mui/material";
 import { BabyIcon } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 
@@ -13,8 +14,7 @@ export default function TopBarNav() {
         className="px-4 flex gap-x-2 items-center"
         onClick={() => router.push("/")}
       >
-        <BabyIcon className="text-green-600" />
-        <h1 className="text-sm text-green-600  font-semibold">CAKRA</h1>
+        <Image src={"/CAKRA.png"} alt="cakra.png" width={80} height={80} />
       </div>
       {pathname == "/" && (
         <Link
