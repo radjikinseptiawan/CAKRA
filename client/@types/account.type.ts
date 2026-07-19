@@ -11,3 +11,14 @@ export type LoginSchema = {
   username: string;
   password: string;
 };
+
+export type EmployeeType = {
+  Profile: {
+    fullname: string;
+    number_phone: string;
+    role: string;
+    email: string;
+  };
+  username: string;
+  account_id: string;
+};

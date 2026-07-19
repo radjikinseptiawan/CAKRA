@@ -1,6 +1,7 @@
+from typing import Optional
 from fastapi import APIRouter, Response, Depends, Request
 from lib.jwt import get_current_account
-from schema.cctv_schema import CCTVCreate
+from schema.cctv_schema import CCTVCreate, CCTVUpdate
 from schema.account_schema import AccountModel, ProfileModel, RegisterProfile, UpdateProfileModel
 import services.main_service as Services
 import services.cctv_service as CCTVService
@@ -45,10 +46,17 @@ async def update_status():
 
 
 # Manajemen Perangkat CCTV
+@router.get("/cctvs/list")
+async def cctv_list(page, account = Depends(get_current_account)):
+    return await CCTVService.limitation_camera(page)
 
 @router.get("/cctvs", summary="Mengambil semua CCTV dari database")
-async def get_camera_list(account = Depends(get_current_account)):
-    return await CCTVService.get_camera_service()
+async def get_camera_list(search : Optional[str] = None, category : Optional[str] = None,request:Request = None,account = Depends(get_current_account)):
+    return await CCTVService.get_camera_service(search,category,request)
+
+@router.patch("/cctvs/{id}", summary="Mengupdate kategori cctv")
+async def update_camera_category(category : CCTVUpdate,id,request: Request, account=Depends(get_current_account)):
+    return await CCTVService.update_cctv_category(category,id,request)
 
 @router.post("/cctvs", summary="Menambahkan cctv baru ke sistem")
 async def  add_camera(body : CCTVCreate, request: Request,account=Depends(get_current_account)):

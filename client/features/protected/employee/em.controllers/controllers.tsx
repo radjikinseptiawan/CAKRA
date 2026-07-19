@@ -2,15 +2,16 @@
 import { Box, Button, Container, TextField } from "@mui/material";
 import { KeyIcon, Plus, Search } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useEmployeContext } from "../em.hooks/em.hooks";
 
 export default function EmployeeControllers() {
-  const router = useRouter();
+  const { employe } = useEmployeContext();
   return (
     <Container>
       <div className="flex justify-between">
         <div className="flex flex-col gap-y-4">
           <h1 className="text-xl font-bold md:text-2xl">Hak Akses</h1>
-          <p>1 Pengguna Terdaftar di sistem</p>
+          <p>{employe.length} Pengguna Terdaftar di sistem</p>
           <TextField
             size="small"
             slotProps={{

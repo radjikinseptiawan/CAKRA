@@ -34,8 +34,8 @@ export default function MapsForms() {
         ...data,
         category: categoryCamera,
       };
-      console.log(payload);
       const response = await addCamera(payload);
+      console.log(response);
       window.location.reload();
       setIsOpen(false);
       return response;

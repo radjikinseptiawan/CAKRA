@@ -72,3 +72,77 @@ export const deleteCamera = async (id: string) => {
     console.error(error);
   }
 };
+
+export const selectCameraCategory = async (category: string) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/cctvs?category=${category}`, {
+      withCredentials: true,
+    });
+    return response.data;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const selectCategorySearchKey = async (
+  name: string,
+  category: string,
+) => {
+  try {
+    const response = await axios.get(
+      `${BASE_URL}/cctvs?search=${name}&category=${category}`,
+      { withCredentials: true },
+    );
+    return response.data;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+let debounceTimer: ReturnType<typeof setTimeout> | undefined;
+export const searchCamera = async (
+  name: string,
+  delay: number = 500,
+): Promise<CameraSchema[] | unknown> => {
+  return new Promise((resolve, reject) => {
+    debounceTimer = setTimeout(async () => {
+      try {
+        const response = await axios.get(`${BASE_URL}/cctvs?search=${name}`, {
+          withCredentials: true,
+        });
+        const results = response.data;
+        resolve(results);
+      } catch (error) {
+        console.error(error);
+        reject(error);
+      }
+    }, delay);
+  });
+};
+
+export const updateCameraCategory = async (
+  body: { category: string },
+  id: string,
+) => {
+  try {
+    const response = await axios.patch(`${BASE_URL}/cctvs/${id}`, body, {
+      withCredentials: true,
+    });
+    console.log(response);
+    return response;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const limitationCameraList = async (page: number) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/cctvs/list?page=${page}`, {
+      withCredentials: true,
+    });
+    console.log(response);
+    return response.data;
+  } catch (error) {
+    console.error(error);
+  }
+};

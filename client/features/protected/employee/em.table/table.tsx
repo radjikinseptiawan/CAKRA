@@ -1,4 +1,5 @@
 "use client";
+import { EmployeeType } from "@/@types/account.type";
 import { useTokenJWT } from "@/context/user.context";
 import {
   allAccountsUsers,
@@ -20,17 +21,7 @@ import {
 } from "@mui/material";
 import { Search, Trash } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-
-type EmployeeType = {
-  Profile: {
-    fullname: string;
-    number_phone: string;
-    role: string;
-    email: string;
-  };
-  username: string;
-  account_id: string;
-};
+import { useEmployeContext } from "../em.hooks/em.hooks";
 
 const ROLE_STYLES: Record<string, string> = {
   OWNER: "bg-emerald-50 text-emerald-800 border-transparent",
@@ -48,18 +39,18 @@ function getInitials(name: string) {
 }
 
 export default function TableEmployee() {
-  const [users, setUsers] = useState<EmployeeType[]>([]);
+  const { employe, setEmploye } = useEmployeContext();
   const [search, setSearch] = useState("");
   const user = useTokenJWT();
 
   const getAllUsers = async () => {
     const response = await allAccountsUsers();
     if (!response) return null;
-    setUsers(response.data);
+    setEmploye(response.data);
   };
 
   const updateRole = async (username: string, role: string, id: string) => {
-    setUsers((prev) =>
+    setEmploye((prev) =>
       prev.map((item) =>
         item.username === username
           ? { ...item, Profile: { ...item.Profile, role } }
@@ -73,17 +64,19 @@ export default function TableEmployee() {
     getAllUsers();
   }, []);
 
+  console.log("ini", employe);
+
   const filteredUsers = useMemo(
     () =>
-      users.filter(
+      employe.filter(
         (item) =>
           item.Profile.fullname.toLowerCase().includes(search.toLowerCase()) ||
           item.username.toLowerCase().includes(search.toLowerCase()),
       ),
-    [users, search],
+    [employe, search],
   );
 
-  if (!users) return null;
+  if (!employe) return null;
 
   const canDelete = user && user.role !== "VISITOR" && user.role !== "STAFF";
   const isOwnerViewer = user && user.role === "OWNER";

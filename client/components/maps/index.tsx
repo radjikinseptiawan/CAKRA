@@ -23,7 +23,7 @@ export default function Maps() {
 
   const getAllCamerasData = async () => {
     const response = await getAllCamera();
-    setCameras(response);
+    setCameras(response.data);
   };
 
   useEffect(() => {

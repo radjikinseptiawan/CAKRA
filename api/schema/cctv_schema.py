@@ -8,3 +8,6 @@ class CCTVCreate(BaseModel):
     longitude : float = Field(None, examples=[106.8456])
     category : str = Field(...,example=["PRIVATE","PUBLIC"])
     location_description: Optional[str] = Field(None, examples=["Gerbang utama perumahan Kerta Mukti blok C"])
+
+class CCTVUpdate(BaseModel):
+    category : str = Field(...)

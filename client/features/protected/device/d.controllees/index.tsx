@@ -1,6 +1,11 @@
 import { useMapProvider } from "@/context/map.context";
 import { useTokenJWT } from "@/context/user.context";
 import {
+  searchCamera,
+  selectCameraCategory,
+  selectCategorySearchKey,
+} from "@/services/maps.service";
+import {
   Box,
   Button,
   Container,
@@ -8,15 +13,40 @@ import {
   InputLabel,
   MenuItem,
   Select,
+  SelectChangeEvent,
   TextField,
 } from "@mui/material";
 import { ChevronDown, MapPin, Plus, Search } from "lucide-react";
-import { useEffect } from "react";
+import {
+  ChangeEvent,
+  FormEvent,
+  KeyboardEvent,
+  useEffect,
+  useState,
+} from "react";
+import { useCameraContext } from "../d.hooks/device.hooks";
+import { CameraSchema } from "@/@types/camera.type";
+import { useRouter } from "next/navigation";
+
+interface CameraResponse {
+  data: CameraSchema[];
+  public: number;
+  private: number;
+}
 
 export default function DeviceControllers() {
   const { setIsOpen, selectedCoordinat, setSelectedCoordinat } =
     useMapProvider();
-  const user = useTokenJWT();
+  const {
+    setCameras,
+    setKeyword,
+    camera,
+    keyword,
+    selected,
+    setSelected,
+    setCount,
+    count,
+  } = useCameraContext();
 
   const addCamera = () => {
     navigator.geolocation.getCurrentPosition((position) => {
@@ -25,6 +55,9 @@ export default function DeviceControllers() {
     });
     setIsOpen(true);
   };
+  const user = useTokenJWT();
+
+  const router = useRouter();
 
   useEffect(() => {
     navigator.geolocation.getCurrentPosition((position) => {
@@ -32,6 +65,67 @@ export default function DeviceControllers() {
       setSelectedCoordinat({ lat, lng });
     });
   }, []);
+
+  const searchCameraName = async (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key != "Enter") return null;
+    if (!keyword.trim()) return window.location.reload();
+    try {
+      if (selected) {
+        const response: CameraSchema[] | any = await selectandSearch();
+        setCount({ private: response.private, public: response.public });
+        setCameras(response.data);
+        return;
+      }
+
+      const response: CameraSchema[] | any = await searchCamera(keyword);
+      if (!response) return null;
+      setCount({ private: response.private, public: response.public });
+
+      setCameras(response.data as any);
+
+      return;
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const selectCamera = async (e: SelectChangeEvent<string>) => {
+    const value = e.target.value;
+    setSelected(value);
+
+    if (keyword) {
+      const response: CameraSchema[] | any = await selectandSearch();
+      setCount({ private: response.private, public: response.public });
+
+      setCameras(response.data);
+      return;
+    }
+
+    const response: CameraSchema[] | any = await selectCameraCategory(value);
+    if (!response) return null;
+    setCount({ private: response.private, public: response.public });
+
+    setCameras(response.data as any);
+  };
+
+  const selectandSearch = async () => {
+    if (!keyword) return null;
+    try {
+      const response: CameraSchema[] | any = await selectCategorySearchKey(
+        keyword,
+        selected,
+      );
+      if (!response) return null;
+      setCount({ private: response.private, public: response.public });
+
+      setCameras(response.data);
+      return response;
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  if (!user) return null;
 
   return (
     <Container>
@@ -42,9 +136,10 @@ export default function DeviceControllers() {
             <h1 className="text-xl font-bold md:text-2xl">
               Perangkat Terdaftar
             </h1>
-            <p>21 titik CCTV di wilayah kamu</p>
+            <p>{camera?.length} titik CCTV di wilayah kamu</p>
           </div>
           <Button
+            disabled={user.role == "VISITOR"}
             color="success"
             variant="contained"
             onClick={addCamera}
@@ -58,9 +153,15 @@ export default function DeviceControllers() {
 
       <Box>
         {/* Box ke 2 */}
-
         <div className="flex flex-col gap-4 sm:flex-row my-5">
-          <div className="bg-lime-400/20 rounded-md px-4 py-3 w-full sm:w-1/2 flex justify-between items-center gap-x-2">
+          <div
+            onClick={() =>
+              router.push(
+                `/map?lat=${selectedCoordinat?.lat}&lng=${selectedCoordinat?.lng}`,
+              )
+            }
+            className="bg-lime-400/20  cursor-pointer rounded-md px-4 py-3 w-full sm:w-1/2 flex justify-between items-center gap-x-2"
+          >
             <div className="min-w-0">
               <span className="flex gap-x-2 items-center">
                 <div className="animate-pulse bg-green-600 rounded-full w-2 h-2 shrink-0" />
@@ -80,11 +181,15 @@ export default function DeviceControllers() {
           <div className="flex bg-black/20 rounded-md w-full sm:w-1/2 px-2 py-3">
             <div className="border-r-2 pr-4 text-center flex-1">
               <h4 className="text-sm">PUBLIK</h4>
-              <p className="text-lg text-end font-bold md:text-xl">21</p>
+              <p className="text-lg text-end font-bold md:text-xl">
+                {count.public}
+              </p>
             </div>
             <div className="mx-4 text-center flex-1">
               <h4 className="text-sm">PRIVAT</h4>
-              <p className="text-lg font-bold text-start md:text-xl">0</p>
+              <p className="text-lg font-bold text-start md:text-xl">
+                {count.private}
+              </p>
             </div>
           </div>
         </div>
@@ -98,6 +203,10 @@ export default function DeviceControllers() {
             <TextField
               variant="outlined"
               color="success"
+              autoComplete="off"
+              autoCorrect="off"
+              onChange={(e) => setKeyword(e.target.value)}
+              onKeyDown={searchCameraName}
               placeholder="CCTV...."
               slotProps={{
                 input: {
@@ -110,10 +219,10 @@ export default function DeviceControllers() {
             />
             <FormControl className="w-40">
               <InputLabel>Kategori</InputLabel>
-              <Select>
-                <MenuItem>SEMUA</MenuItem>
-                <MenuItem>PUBLIC</MenuItem>
-                <MenuItem>PRIVATE</MenuItem>
+              <Select value={selected} onChange={selectCamera}>
+                <MenuItem value={"SEMUA"}>SEMUA</MenuItem>
+                <MenuItem value={"PUBLIC"}>PUBLIC</MenuItem>
+                <MenuItem value={"PRIVATE"}>PRIVATE</MenuItem>
               </Select>
             </FormControl>
           </div>
