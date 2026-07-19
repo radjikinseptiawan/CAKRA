@@ -4,11 +4,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from router.router import router
 from lib.db import db
 
-local = getenv("WEB_URL_LOCAL")
-production = getenv("WEB_URL_PRODUCTION")
+local = getenv("WEB_URL_LOCAL", "http://localhost:3000")
+# production = getenv("WEB_URL_PRODUCTION")
 
 app = FastAPI()
-origins = [local, production]
+origins = [url for url in [local, production] if url]
 
 @app.on_event("startup")
 async def start_up():
@@ -25,7 +25,7 @@ app.add_middleware(CORSMiddleware,
 
 app.include_router(router, prefix="/api/v1.0")
 
-app.on_event("shutdown")
+@app.on_event("shutdown")
 async def shutdown():
         await db.disconnect()
         print("Koneksi database prisma berhasil diputus dengan aman")
