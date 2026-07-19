@@ -14,7 +14,7 @@ export default function TopBarNav() {
         className="px-4 flex gap-x-2 items-center"
         onClick={() => router.push("/")}
       >
-        <Image src={"/CAKRA.png"} alt="cakra.png" width={80} height={80} />
+        <Image src={"/CAKRA.png"} alt="cakra.png" width={40} height={40} />
       </div>
       {pathname == "/" && (
         <Link
