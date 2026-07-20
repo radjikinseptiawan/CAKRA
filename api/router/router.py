@@ -51,8 +51,8 @@ async def cctv_list(page, account = Depends(get_current_account)):
     return await CCTVService.limitation_camera(page)
 
 @router.get("/cctvs", summary="Mengambil semua CCTV dari database")
-async def get_camera_list(search : Optional[str] = None, category : Optional[str] = None,request:Request = None,account = Depends(get_current_account)):
-    return await CCTVService.get_camera_service(search,category,request)
+async def get_camera_list(page:str,search : Optional[str] = None, category : Optional[str] = None,request:Request = None,account = Depends(get_current_account)):
+    return await CCTVService.get_camera_service(page,search,category,request)
 
 @router.patch("/cctvs/{id}", summary="Mengupdate kategori cctv")
 async def update_camera_category(category : CCTVUpdate,id,request: Request, account=Depends(get_current_account)):

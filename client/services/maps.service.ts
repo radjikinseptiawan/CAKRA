@@ -37,9 +37,9 @@ export const addCamera = async (payload: CameraSchema) => {
  * @description
  * Endpoin untuk mengambil semua kamera
  */
-export const getAllCamera = async () => {
+export const getAllCamera = async (page: string = "1") => {
   try {
-    const response = await axios.get(`${BASE_URL}/cctvs`, {
+    const response = await axios.get(`${BASE_URL}/cctvs?page=${page}`, {
       withCredentials: true,
     });
     const results = response.data;
@@ -73,11 +73,17 @@ export const deleteCamera = async (id: string) => {
   }
 };
 
-export const selectCameraCategory = async (category: string) => {
+export const selectCameraCategory = async (
+  category: string,
+  page: string = "1",
+) => {
   try {
-    const response = await axios.get(`${BASE_URL}/cctvs?category=${category}`, {
-      withCredentials: true,
-    });
+    const response = await axios.get(
+      `${BASE_URL}/cctvs?category=${category}&page=${page}`,
+      {
+        withCredentials: true,
+      },
+    );
     return response.data;
   } catch (error) {
     console.error(error);
@@ -87,10 +93,11 @@ export const selectCameraCategory = async (category: string) => {
 export const selectCategorySearchKey = async (
   name: string,
   category: string,
+  page: string = "1",
 ) => {
   try {
     const response = await axios.get(
-      `${BASE_URL}/cctvs?search=${name}&category=${category}`,
+      `${BASE_URL}/cctvs?search=${name}&category=${category}&page=${page}`,
       { withCredentials: true },
     );
     return response.data;
@@ -102,14 +109,18 @@ export const selectCategorySearchKey = async (
 let debounceTimer: ReturnType<typeof setTimeout> | undefined;
 export const searchCamera = async (
   name: string,
+  page: string = "1",
   delay: number = 500,
 ): Promise<CameraSchema[] | unknown> => {
   return new Promise((resolve, reject) => {
     debounceTimer = setTimeout(async () => {
       try {
-        const response = await axios.get(`${BASE_URL}/cctvs?search=${name}`, {
-          withCredentials: true,
-        });
+        const response = await axios.get(
+          `${BASE_URL}/cctvs?search=${name}&page=${page}`,
+          {
+            withCredentials: true,
+          },
+        );
         const results = response.data;
         resolve(results);
       } catch (error) {

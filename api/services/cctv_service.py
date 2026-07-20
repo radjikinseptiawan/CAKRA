@@ -61,89 +61,78 @@ async def limitation_camera(page: str = '1') -> Dict[str, Any]:
 
 
 
-async def get_camera_service(search : Optional[str] = None, category : Optional[str] = None
-,request : Request = None):
-    cookie =  request.cookies.get("access_token")
+async def get_camera_service(
+    page: int = 1,
+    search: Optional[str] = None,
+    category: Optional[str] = None,
+    request: Request = None,
+):
+    cookie = request.cookies.get("access_token")
 
-    if cookie is None : 
-        raise httpx.HTTPStatusError(detail="Cookie tidak ditemukan",status_code=status.HTTP_401_UNAUTHORIZED)
+    if cookie is None:
+        raise HTTPException(
+            detail="Cookie tidak ditemukan",
+            status_code=status.HTTP_401_UNAUTHORIZED
+        )
+
+    limit = 20
+    offset = (int(page) - 1) * limit
+
     try:
-        async def public_count():
-            await db.ccvtv.count(where={
-            "category" : "PUBLIC"
-           })
-            
-        async def private_count():
-            await db.ccvtv.count(where={
-            "category" : "PRIVATE"
-        })
-    
-        public,private = await asyncio.gather(
-        public_count(),
-        private_count()
-        )  
-        if category and search and category != "SEMUA":
-            data = await db.ccvtv.find_many(where={
-                "category" : category,
-                "camera_name" : {
-                    "contains" : search,
-                    "mode" : "insensitive",
-                }
-            })
+        where = {}
 
-            return {
-                "data" : data,
-                "public" : public,
-                "private" : private
-            }
-
+        if category and category != "SEMUA":
+            where["category"] = category
 
         if search:
-            data = await db.ccvtv.find_many(where={
-                "camera_name" : {
-                    "contains" : search,
-                    "mode" : "insensitive"
-                }
-            })
-            return {
-                "data" : data,
-                "public" : public,
-                "private" : private
+            where["camera_name"] = {
+                "contains": search,
+                "mode": "insensitive"
             }
 
+        async def public_count():
+            return await db.ccvtv.count(
+                where={"category": "PUBLIC"}
+            )
 
-        if category:
-            if category == "SEMUA" :
-                data = await db.ccvtv.find_many()
-                return {
-                "data" : data,
-                "public" : public,
-                "private" : private
-            }
+        async def private_count():
+            return await db.ccvtv.count(
+                where={"category": "PRIVATE"}
+            )
 
-            data = await db.ccvtv.find_many(where={
-                "category" : category 
-            })
+        async def total_count():
+            return await db.ccvtv.count(where=where)
 
-            return {
-                "data" : data,
-                "public" : public,
-                "private" : private
-            }
+        async def fetch_data():
+            return await db.ccvtv.find_many(
+                where=where,
+                skip=offset,
+                take=limit,
+                order={"cctv_id": "desc"}
+            )
 
+        public, private, total_data, data = await asyncio.gather(
+            public_count(),
+            private_count(),
+            total_count(),
+            fetch_data()
+        )
 
-        data = await db.ccvtv.find_many()
         return {
-                "data" : data,
-                "public" : public,
-                "private" : private
-            }
+            "data": data,
+            "page": page,
+            "limit": limit,
+            "total_data": total_data,
+            "total_page": (total_data + limit - 1) // limit,
+            "public": public,
+            "private": private,
+        }
 
-    except httpx.HTTPStatusError as error:
-       raise HTTPException(detail=error)
-    except httpx.RequestError as error:
-       raise HTTPException(detail=error)
- 
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=str(e)
+        ) 
 
 
 # Menambahkan camera CCTV baru

@@ -53,17 +53,16 @@ export default function DeviceTable() {
     return response;
   };
 
-  // BETUL: Memantau state 'number'. Tiap kali halaman di-klik, data otomatis ditarik ulang.
   useEffect(() => {
     getAllCamerasData();
   }, [number]);
 
-  // BETUL: Menangkap angka halaman asli dari argumen kedua bawaan MUI Pagination
   const handlePageChange = (
     event: React.ChangeEvent<unknown>,
     value: number,
   ) => {
     setNumber(value);
+    router.push(`?page=${value}`);
   };
 
   return (

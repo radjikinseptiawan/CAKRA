@@ -26,7 +26,7 @@ import {
 } from "react";
 import { useCameraContext } from "../d.hooks/device.hooks";
 import { CameraSchema } from "@/@types/camera.type";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 interface CameraResponse {
   data: CameraSchema[];
@@ -47,6 +47,7 @@ export default function DeviceControllers() {
     setCount,
     count,
   } = useCameraContext();
+  const page = useSearchParams().get("page");
 
   const addCamera = () => {
     navigator.geolocation.getCurrentPosition((position) => {
@@ -77,7 +78,10 @@ export default function DeviceControllers() {
         return;
       }
 
-      const response: CameraSchema[] | any = await searchCamera(keyword);
+      const response: CameraSchema[] | any = await searchCamera(
+        keyword,
+        page as string,
+      );
       if (!response) return null;
       setCount({ private: response.private, public: response.public });
 
@@ -101,7 +105,11 @@ export default function DeviceControllers() {
       return;
     }
 
-    const response: CameraSchema[] | any = await selectCameraCategory(value);
+    const response: CameraSchema[] | any = await selectCameraCategory(
+      value,
+      page as string,
+    );
+    console.log(response);
     if (!response) return null;
     setCount({ private: response.private, public: response.public });
 
@@ -114,6 +122,7 @@ export default function DeviceControllers() {
       const response: CameraSchema[] | any = await selectCategorySearchKey(
         keyword,
         selected,
+        page as string,
       );
       if (!response) return null;
       setCount({ private: response.private, public: response.public });
