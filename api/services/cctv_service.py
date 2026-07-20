@@ -13,7 +13,8 @@ SECRET_KEY = getenv("SECRET_JWT")
 import math
 from typing import Dict, Any
 
-async def limitation_camera(page: str = '1') -> Dict[str, Any]:
+
+async def all_camera():
     async def public_count():
         return await db.ccvtv.count(where={
         "category" : "PUBLIC"
@@ -30,34 +31,25 @@ async def limitation_camera(page: str = '1') -> Dict[str, Any]:
     )
 
 
-    limit = 20
-    
-    offset = (int(page) - 1) * limit
 
-    async def fetch_data():
-        return await db.ccvtv.find_many(
-            take=limit,   
-            skip=offset   
-        )
         
     async def fetch_total():
         return await db.ccvtv.count()
 
+    async def fetch_data():
+        return await db.ccvtv.find_many()
     data, total_data = await asyncio.gather(fetch_data(), fetch_total())
 
-    total_page = math.ceil(total_data / limit)
 
     return {
         "data": data,
         "meta": {
-            "current_page": int(page),
-            "total_page": total_page,
             "total_data": total_data,
-            "limit": limit,
             "private" : private,
             "public" : public
         }
     }
+
 
 
 
@@ -68,7 +60,7 @@ async def get_camera_service(
     request: Request = None,
 ):
     cookie = request.cookies.get("access_token")
-
+    
     if cookie is None:
         raise HTTPException(
             detail="Cookie tidak ditemukan",

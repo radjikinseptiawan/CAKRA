@@ -46,9 +46,9 @@ async def update_status():
 
 
 # Manajemen Perangkat CCTV
-@router.get("/cctvs/list")
-async def cctv_list(page, account = Depends(get_current_account)):
-    return await CCTVService.limitation_camera(page)
+@router.get("/cctvs/all")
+async def cctv_list( account = Depends(get_current_account)):
+    return await CCTVService.all_camera()
 
 @router.get("/cctvs", summary="Mengambil semua CCTV dari database")
 async def get_camera_list(page:str,search : Optional[str] = None, category : Optional[str] = None,request:Request = None,account = Depends(get_current_account)):

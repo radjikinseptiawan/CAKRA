@@ -39,7 +39,7 @@ export const addCamera = async (payload: CameraSchema) => {
  */
 export const getAllCamera = async (page: string = "1") => {
   try {
-    const response = await axios.get(`${BASE_URL}/cctvs?page=${page}`, {
+    const response = await axios.get(`${BASE_URL}/cctvs/all`, {
       withCredentials: true,
     });
     const results = response.data;
@@ -77,6 +77,7 @@ export const selectCameraCategory = async (
   category: string,
   page: string = "1",
 ) => {
+  if (page == null) return null;
   try {
     const response = await axios.get(
       `${BASE_URL}/cctvs?category=${category}&page=${page}`,
@@ -95,6 +96,7 @@ export const selectCategorySearchKey = async (
   category: string,
   page: string = "1",
 ) => {
+  if (page == null) return null;
   try {
     const response = await axios.get(
       `${BASE_URL}/cctvs?search=${name}&category=${category}&page=${page}`,
@@ -112,6 +114,7 @@ export const searchCamera = async (
   page: string = "1",
   delay: number = 500,
 ): Promise<CameraSchema[] | unknown> => {
+  if (page == null) return null;
   return new Promise((resolve, reject) => {
     debounceTimer = setTimeout(async () => {
       try {
@@ -143,17 +146,5 @@ export const updateCameraCategory = async (
     return response;
   } catch (error) {
     console.log(error);
-  }
-};
-
-export const limitationCameraList = async (page: number) => {
-  try {
-    const response = await axios.get(`${BASE_URL}/cctvs/list?page=${page}`, {
-      withCredentials: true,
-    });
-    console.log(response);
-    return response.data;
-  } catch (error) {
-    console.error(error);
   }
 };

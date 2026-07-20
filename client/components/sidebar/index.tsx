@@ -47,7 +47,7 @@ const navigation = [
   {
     icon: <Cctv />,
     name: "Perangkat",
-    href: "/device",
+    href: "/device?page=1",
   },
 ];
 

@@ -73,6 +73,7 @@ export default function DeviceControllers() {
     try {
       if (selected) {
         const response: CameraSchema[] | any = await selectandSearch();
+        if (!response) return null;
         setCount({ private: response.private, public: response.public });
         setCameras(response.data);
         return;
@@ -99,6 +100,8 @@ export default function DeviceControllers() {
 
     if (keyword) {
       const response: CameraSchema[] | any = await selectandSearch();
+      if (!response) return null;
+
       setCount({ private: response.private, public: response.public });
 
       setCameras(response.data);
@@ -145,7 +148,7 @@ export default function DeviceControllers() {
             <h1 className="text-xl font-bold md:text-2xl">
               Perangkat Terdaftar
             </h1>
-            <p>{camera?.length} titik CCTV di wilayah kamu</p>
+            <p>{count.private + count.public} titik CCTV di wilayah kamu</p>
           </div>
           <Button
             disabled={user.role == "VISITOR"}

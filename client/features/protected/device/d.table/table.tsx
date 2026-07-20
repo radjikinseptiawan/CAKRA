@@ -1,7 +1,6 @@
 import { CameraSchema } from "@/@types/camera.type";
 import {
-  getAllCamera,
-  limitationCameraList,
+  selectCameraCategory,
   updateCameraCategory,
 } from "@/services/maps.service";
 import {
@@ -21,22 +20,29 @@ import {
   TableRow,
 } from "@mui/material";
 import { EyeIcon } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useCameraContext } from "../d.hooks/device.hooks";
 import { useTokenJWT } from "@/context/user.context";
 
 export default function DeviceTable() {
-  const { camera, setCameras, setCount } = useCameraContext();
+  const { camera, setCameras, setCount, selected } = useCameraContext();
   const [number, setNumber] = useState<number>(1);
   const [data, setData] = useState<any>();
   const router = useRouter();
+  const page = useSearchParams().get("page");
   const user = useTokenJWT();
 
   const getAllCamerasData = async () => {
-    const response = await limitationCameraList(number);
+    if (!page) {
+      router.push("?page=1");
+    }
+
+    const response = await selectCameraCategory(selected, page as string);
+    if (!response) return null;
+
     setCount({ private: response.private, public: response.public });
-    setData(response.meta);
+    setData(response);
     setCameras(response.data);
   };
 
@@ -55,7 +61,7 @@ export default function DeviceTable() {
 
   useEffect(() => {
     getAllCamerasData();
-  }, [number]);
+  }, [number, page]);
 
   const handlePageChange = (
     event: React.ChangeEvent<unknown>,
