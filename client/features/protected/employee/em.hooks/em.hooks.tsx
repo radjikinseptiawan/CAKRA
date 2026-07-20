@@ -11,6 +11,8 @@ import {
 
 interface EmployeeHooks {
   employe: EmployeeType[];
+  keyword: string;
+  setKeyword: Dispatch<SetStateAction<string>>;
   setEmploye: Dispatch<SetStateAction<EmployeeType[]>>;
 }
 
@@ -18,8 +20,11 @@ export const EmployeeContext = createContext<EmployeeHooks | null>(null);
 
 export const EmployeeProvider = ({ children }: { children: ReactNode }) => {
   const [employe, setEmploye] = useState<EmployeeType[]>([]);
+  const [keyword, setKeyword] = useState<string>("");
   return (
-    <EmployeeContext.Provider value={{ employe, setEmploye }}>
+    <EmployeeContext.Provider
+      value={{ employe, setEmploye, keyword, setKeyword }}
+    >
       {children}
     </EmployeeContext.Provider>
   );

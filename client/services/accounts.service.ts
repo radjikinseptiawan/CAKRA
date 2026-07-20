@@ -60,3 +60,10 @@ export const logoutService = async () => {
     console.log(error);
   }
 };
+
+export const searchAccounts = async (target: string) => {
+  const response = await axios.get(`${BASE_URL}/users/search?s=${target}`, {
+    withCredentials: true,
+  });
+  return response.data;
+};

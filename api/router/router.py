@@ -10,9 +10,15 @@ import services.account_service as AccountService
 router = APIRouter()
 
 # Users Data
+
+@router.get("/users/search")
+async def search_user_one(s: Optional[str] = None):
+    return await Services.search_user(s)
+
 @router.get("/users")
-async def all_users(account = Depends(get_current_account)):
-    return await Services.get_all_users()
+async def all_users(request: Request,account = Depends(get_current_account)):
+    return await Services.get_all_users(request)
+
 
 @router.patch("/users/{id}")
 async def update_user(id,body : UpdateProfileModel, request: Request, account = Depends(get_current_account)):

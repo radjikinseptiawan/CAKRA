@@ -165,7 +165,7 @@ export default function DeviceTable() {
                       color="success"
                       onClick={(e) => {
                         e.stopPropagation();
-                        router.push(`?id=${item.cctv_id}`);
+                        router.push(`?page=${page}&id=${item.cctv_id}`);
                       }}
                     >
                       <EyeIcon size={18} />
