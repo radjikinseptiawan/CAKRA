@@ -22,7 +22,7 @@ export default function MapsDialogsAdd() {
   };
   return (
     <>
-      {user && (user.role == "OWNER" || user.role == "STAFF ") ? (
+      {user && user.role != "VISITOR" ? (
         <Dialog open={isOpen} onClose={closeDialogs}>
           <DialogTitle>Add Camera</DialogTitle>
           <DialogContent>
