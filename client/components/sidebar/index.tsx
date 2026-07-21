@@ -42,7 +42,7 @@ const navigation = [
   {
     icon: <History />,
     name: "Data History",
-    href: "/history",
+    href: "/history?page=1",
   },
   {
     icon: <Cctv />,
@@ -60,13 +60,17 @@ export default function Sidebar({
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const section = useSearchParams().get("slide");
+  const page = useSearchParams().get("page");
   const pathname = usePathname();
   const closeSlide = () => {
     setIsOpen(!isOpen);
+    if (page) {
+      router.replace(`${pathname}?page=${page}`);
+      return;
+    }
     router.replace(pathname);
   };
 
-  console.log(pathname);
   return (
     <>
       <div
@@ -103,7 +107,13 @@ export default function Sidebar({
               );
             })}
             <button
-              onClick={() => router.push("?action=logout")}
+              onClick={() => {
+                if (page) {
+                  router.push(`?page=${page}&action=logout`);
+                  return;
+                }
+                router.push("?action=logout");
+              }}
               className={`flex items-center w-full gap-x-2 text-green-600 hover:bg-gray-100 px-2 py-3 my-1 rounded-md cursor-pointer`}
             >
               <LogOut />

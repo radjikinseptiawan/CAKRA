@@ -60,7 +60,7 @@ export default function MapsDialogsShow() {
           size="small"
           variant="outlined"
           color="success"
-          onClick={() => router.replace(pathname)}
+          onClick={() => router.back()}
         >
           Close
         </Button>

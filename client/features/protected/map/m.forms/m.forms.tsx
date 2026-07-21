@@ -36,6 +36,9 @@ export default function MapsForms() {
       };
       const response = await addCamera(payload);
       console.log(response);
+      if (!response) {
+        return null;
+      }
       window.location.reload();
       setIsOpen(false);
       return response;

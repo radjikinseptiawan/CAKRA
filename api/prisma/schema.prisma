@@ -1,8 +1,8 @@
 generator client {
   provider                    = "prisma-client-py"
   previewFeatures             = ["prismaSchemaFolder"]
-  enable_experimental_decimal = "true"
   recursive_type_depth        = "5"
+  enable_experimental_decimal = "true"
 }
 
 datasource db {
@@ -24,9 +24,12 @@ model ccvtv {
 
 model Accounts {
   account_id String   @id @default(uuid())
-  username   String   @unique
+  created_at DateTime @default(now()) @map("created_at")
   password   String
+  username   String   @unique
   Profile    Profile?
+
+  @@map("accounts")
 }
 
 model Profile {
@@ -36,7 +39,27 @@ model Profile {
   fullname     String
   role         Role     @default(VISITOR)
   email        String
+  created_at   DateTime @default(now()) @map("created_at")
   account      Accounts @relation(fields: [account_id], references: [account_id])
+
+  @@map("profile")
+}
+
+model Incident_Tragedy {
+  incident_id   String       @id @default(uuid())
+  date_incident DateTime
+  camera_name   String
+  image_url     String       @default("https://img.magnific.com/vektor-premium/rusak_313674-37129.jpg")
+  status        ReviewStatus @default(PENDING)
+  created_at    DateTime     @default(now()) @map("created_at")
+
+  @@map("incident_tragedy")
+}
+
+enum ReviewStatus {
+  PENDING
+  CONFIRMED
+  REJECTED
 }
 
 enum Role {

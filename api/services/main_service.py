@@ -7,8 +7,12 @@ import httpx
 
 SECRET_KEY = getenv("SECRET_JWT")
 
-async def search_user(username : str):
-    print(username)
+async def search_user(username : str, request):
+    cookie = request.cookies.get("access_token")
+
+    if cookie is None : 
+       raise HTTPException(detail="Cookie not found!",status_code=status.HTTP_404_NOT_FOUND)
+   
     if username is None:
         raise HTTPException(detail="Username must been filled!",status_code=status.HTTP_400_BAD_REQUEST)
     try:
@@ -47,17 +51,6 @@ async def get_all_users(request):
 
     if cookie is None : 
        raise HTTPException(detail="Cookie not found!",status_code=status.HTTP_404_NOT_FOUND)
-   
-    payload = jwt.decode(
-       token=cookie,
-       key=SECRET_KEY,
-       algorithms=["HS256"]
-    )
-
-    role = payload["role"]
-    if role != "OWNER":
-       raise HTTPException(detail="Access denied",status_code=status.HTTP_403_FORBIDDEN)
-        
 
     try:
         allUsers = await db.accounts.find_many(include={'Profile' : True})

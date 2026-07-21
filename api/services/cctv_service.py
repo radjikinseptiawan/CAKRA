@@ -5,6 +5,7 @@ from jose import jwt
 from lib.db import db
 from datetime import timezone, datetime
 from fastapi import HTTPException, status, Request
+from services.role_check import get_role
 import httpx
 
 SECRET_KEY = getenv("SECRET_JWT")
@@ -129,15 +130,7 @@ async def get_camera_service(
 
 # Menambahkan camera CCTV baru
 async def create_camera_service(body,request):
-    cookie = request.cookies.get("access_token")
-
-    if cookie is None:
-        raise HTTPException(detail="Cookie tidak tersedia!", status_code=status.HTTP_404_NOT_FOUND)
-
-    data = jwt.decode(key=SECRET_KEY, token=cookie,algorithms=["HS256"])
-
-    role = data["role"]
-
+    role = get_role(request)
     if role not in ("STAFF", "OWNER"):
         raise HTTPException(detail="Acess denied", status_code=status.HTTP_403_FORBIDDEN)
     
@@ -190,15 +183,7 @@ async def get_camera_detail(id):
         raise error
 
 async def delete_camera_id(id, request):
-
-    cookie = request.cookies.get("access_token")
-
-    if cookie is None:
-        raise HTTPException(detail="Cookie tidak tersedia!", status_code=status.HTTP_404_NOT_FOUND)
-
-    data = jwt.decode(key=SECRET_KEY, token=cookie,algorithms=["HS256"])
-
-    role = data["role"]
+    role = get_role(request)
 
     if role not in ("STAFF","OWNER"):
         raise HTTPException(detail="Acess denied", status_code=status.HTTP_403_FORBIDDEN)
@@ -224,15 +209,9 @@ async def delete_camera_id(id, request):
 
 async def search_cctv_name(name, request):
     cookie = request.cookies.get("access_token")
-    data = jwt.decode(key=SECRET_KEY, token=cookie,algorithms=["HS256"])
-    role = data["role"]
     
     if cookie is None : 
         raise httpx.HTTPStatusError(detail="Cookie not found!", status_code=status.HTTP_404_NOT_FOUND)
-
-    if role not in ("OWNER", "STAFF"):
-        raise httpx.HTTPStatusError(detail="Error, CCTV Not found!", status_code=status.HTTP_404_NOT_FOUND)
-            
 
     try:
         search = await db.ccvtv.find_many(where={

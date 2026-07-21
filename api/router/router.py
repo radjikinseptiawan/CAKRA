@@ -1,19 +1,33 @@
 from typing import Optional
-from fastapi import APIRouter, Response, Depends, Request
+from fastapi import APIRouter, Response, Depends, Request, Query
 from lib.jwt import get_current_account
-from schema.cctv_schema import CCTVCreate, CCTVUpdate
+from router import cctv_router as CCTV
 from schema.account_schema import AccountModel, ProfileModel, RegisterProfile, UpdateProfileModel
+from schema.data_history_schema import HistoryModel, HistoryStatusUpdateModel
+import services.data_history_service as HistoryServices
 import services.main_service as Services
 import services.cctv_service as CCTVService
 import services.account_service as AccountService
 
 router = APIRouter()
 
+@router.get("/data-history",summary="Mengambil semua data dari database")
+async def get_all_data_history(page: int = Query(default=1, ge=1),limit  : int = Query(default=20,ge=1,le=100)):
+    return await HistoryServices.get_all_history(page,limit)
+
+@router.post("/data-history",summary="Menambah data history")
+async def create_data_history(body : HistoryModel):
+    return await HistoryServices.created_history(body)
+
+@router.patch("/data-history",summary="Mengubah status")
+async def update_status_data_history(body : HistoryStatusUpdateModel, id: str):
+    return await HistoryServices.update_history(body,id)
+
 # Users Data
 
 @router.get("/users/search")
-async def search_user_one(s: Optional[str] = None):
-    return await Services.search_user(s)
+async def search_user_one(request: Request,s: Optional[str] = None, account = Depends(get_current_account)):
+    return await Services.search_user(username=s,request=request)
 
 @router.get("/users")
 async def all_users(request: Request,account = Depends(get_current_account)):
@@ -51,30 +65,8 @@ async def update_status():
     return { "Hello": "Hello"}
 
 
-# Manajemen Perangkat CCTV
-@router.get("/cctvs/all")
-async def cctv_list( account = Depends(get_current_account)):
-    return await CCTVService.all_camera()
 
-@router.get("/cctvs", summary="Mengambil semua CCTV dari database")
-async def get_camera_list(page:str,search : Optional[str] = None, category : Optional[str] = None,request:Request = None,account = Depends(get_current_account)):
-    return await CCTVService.get_camera_service(page,search,category,request)
 
-@router.patch("/cctvs/{id}", summary="Mengupdate kategori cctv")
-async def update_camera_category(category : CCTVUpdate,id,request: Request, account=Depends(get_current_account)):
-    return await CCTVService.update_cctv_category(category,id,request)
-
-@router.post("/cctvs", summary="Menambahkan cctv baru ke sistem")
-async def  add_camera(body : CCTVCreate, request: Request,account=Depends(get_current_account)):
-    return  await CCTVService.create_camera_service(body,request)
-
-@router.get("/cctvs/{id}", summary="Melihat detail dari cctv")
-async def  get_detail_camera(id,account=Depends(get_current_account)):
-    return  await CCTVService.get_camera_detail(id)
-
-@router.delete("/cctvs/{id}")
-async def  delete_camera_id(id, request: Request,account=Depends(get_current_account)):
-    return await CCTVService.delete_camera_id(id, request)
 
 # Komunikasi web-socket
 @router.websocket("/ws/camera")
