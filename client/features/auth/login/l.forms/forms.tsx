@@ -6,6 +6,8 @@ import axios from "axios";
 import { loginService } from "@/services/accounts.service";
 import { LoginSchema } from "@/@types/account.type";
 import { useRouter } from "next/navigation";
+import { Eye, EyeOff, Lock, User } from "lucide-react";
+import { useState } from "react";
 
 export default function LoginForms() {
   const {
@@ -13,6 +15,7 @@ export default function LoginForms() {
     register,
     handleSubmit,
   } = useLoginForms();
+  const [isOpenPassword, setIsOpenPassword] = useState<boolean>(false);
   const router = useRouter();
 
   const signIn = async (data: LoginSchema) => {
@@ -22,13 +25,15 @@ export default function LoginForms() {
   };
   return (
     <form
-      className="flex flex-col my-5 items-center gap-y-4"
+      className="flex flex-col my-5 items-center gap-y-5 py-5"
       onSubmit={handleSubmit(signIn)}
     >
       <div>
         <TextField
           label="Username"
           size="small"
+          className="w-62 md:w-74"
+          placeholder="Masukan username..."
           color="success"
           autoComplete="off"
           {...register("username", {
@@ -41,6 +46,7 @@ export default function LoginForms() {
               style: {
                 textTransform: "lowercase",
               },
+              startAdornment: <User className="mx-1 text-gray-400" />,
             },
           }}
         />
@@ -50,19 +56,37 @@ export default function LoginForms() {
           </p>
         )}
       </div>
-      <div>
+      <div className="text-start">
         <TextField
-          color="success"
-          autoComplete="off"
-          type="password"
+          {...register("password")}
           label="Password"
           size="small"
-          {...register("password")}
+          autoCorrect="off"
+          placeholder="*****"
+          color="success"
+          autoComplete="off"
+          type={isOpenPassword ? "text" : "password"}
+          slotProps={{
+            input: {
+              startAdornment: <Lock className="mx-1 text-gray-400" />,
+              endAdornment: (
+                <button
+                  onClick={() => setIsOpenPassword(!isOpenPassword)}
+                  type="button"
+                  className="mx-1 text-gray-400 cursor-pointer"
+                >
+                  {isOpenPassword ? (
+                    <Eye className="w-4 h-4 md:w-5 md:h-5" />
+                  ) : (
+                    <EyeOff className="w-4 h-4 md:w-5 md:h-5" />
+                  )}
+                </button>
+              ),
+            },
+          }}
         />
         {errors && (
-          <p className="text-sm text-red-500 text-start">
-            {errors.password?.message}
-          </p>
+          <p className="text-sm text-red-500">{errors.password?.message}</p>
         )}
       </div>
       <Button type="submit" variant="contained" color="success" size="small">

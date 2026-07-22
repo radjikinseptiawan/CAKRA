@@ -1,10 +1,12 @@
 "use client";
-import { Button, TextField } from "@mui/material";
+import { Button, InputAdornment, TextField } from "@mui/material";
 import Link from "next/link";
 import useRegisterForm from "../r.hooks";
 import { registerService } from "@/services/accounts.service";
 import { useRouter } from "next/navigation";
 import { useTokenJWT } from "@/context/user.context";
+import { Eye, EyeOff, Lock, Mail, PhoneCall, User } from "lucide-react";
+import { useState } from "react";
 
 export default function RegisterForms() {
   const {
@@ -13,6 +15,8 @@ export default function RegisterForms() {
     handleSubmit,
     reset,
   } = useRegisterForm();
+  const [isOpenConfirmPassword, setIsOpenConfirmPassword] = useState(false);
+  const [isOpenPassword, setIsOpenPassword] = useState(false);
   const router = useRouter();
   const payload = async (data: any) => {
     console.log(data);
@@ -27,7 +31,7 @@ export default function RegisterForms() {
       className="flex flex-col my-5 items-center gap-y-4"
       onSubmit={handleSubmit(payload)}
     >
-      <div className="grid grid-cols-2 gap-x-2 gap-y-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-8">
         <div className="text-start">
           <TextField
             {...register("username", {
@@ -45,6 +49,7 @@ export default function RegisterForms() {
             slotProps={{
               input: {
                 style: { textTransform: "lowercase" },
+                startAdornment: <User className="mx-2 text-gray-400" />,
               },
             }}
           />
@@ -70,6 +75,7 @@ export default function RegisterForms() {
             slotProps={{
               input: {
                 style: { textTransform: "lowercase" },
+                startAdornment: <Mail className="text-gray-400 mx-2" />,
               },
             }}
           />
@@ -95,6 +101,7 @@ export default function RegisterForms() {
             slotProps={{
               input: {
                 style: { textTransform: "lowercase" },
+                startAdornment: <PhoneCall className="text-gray-400 mx-2" />,
               },
             }}
           />
@@ -115,6 +122,11 @@ export default function RegisterForms() {
             color="success"
             placeholder="John Doe"
             type="text"
+            slotProps={{
+              input: {
+                startAdornment: <User className="text-gray-400 mx-2" />,
+              },
+            }}
           />
           {errors && (
             <p className="text-sm text-red-500">{errors.fullname?.message}</p>
@@ -130,7 +142,25 @@ export default function RegisterForms() {
             placeholder="*****"
             color="success"
             autoComplete="off"
-            type="password"
+            type={isOpenPassword ? "text" : "password"}
+            slotProps={{
+              input: {
+                startAdornment: <Lock className="mx-2 text-gray-400" />,
+                endAdornment: (
+                  <button
+                    onClick={() => setIsOpenPassword(!isOpenPassword)}
+                    type="button"
+                    className="mx-1 text-gray-400 cursor-pointer"
+                  >
+                    {isOpenPassword ? (
+                      <Eye className="w-4 h-4 md:w-5 md:h-5" />
+                    ) : (
+                      <EyeOff className="w-4 h-4 md:w-5 md:h-5" />
+                    )}
+                  </button>
+                ),
+              },
+            }}
           />
           {errors && (
             <p className="text-sm text-red-500">{errors.password?.message}</p>
@@ -140,11 +170,31 @@ export default function RegisterForms() {
           <TextField
             color="success"
             {...register("confirm_password")}
-            type="password"
+            type={isOpenConfirmPassword ? "text" : "password"}
             autoComplete="off"
             label="Confirm Password"
             placeholder="*****"
             size="small"
+            slotProps={{
+              input: {
+                startAdornment: <Lock className="mx-2 text-gray-400" />,
+                endAdornment: (
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setIsOpenConfirmPassword(!isOpenConfirmPassword)
+                    }
+                    className="mx-1 text-gray-400 cursor-pointer"
+                  >
+                    {isOpenConfirmPassword ? (
+                      <Eye className="w-4 h-4 md:w-5 md:h-5" />
+                    ) : (
+                      <EyeOff className="w-4 h-4 md:w-5 md:h-5" />
+                    )}
+                  </button>
+                ),
+              },
+            }}
           />
           {errors && (
             <p className="text-sm text-red-500">
