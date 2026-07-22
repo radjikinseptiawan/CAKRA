@@ -19,10 +19,16 @@ import {
 } from "@mui/material";
 import { Check, X as XIcon, Info } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { HistoryItem } from "@/@types/data-history.type";
+import { HistoryItem, HistoryType } from "@/@types/data-history.type";
 import axios from "axios";
-import { getAllHistory } from "@/services/history.service";
+import {
+  getAllHistory,
+  updateConfirmedStatus,
+  updateRejectedStatus,
+} from "@/services/history.service";
 import Image from "next/image";
+import { useHistoryContext } from "../h.hooks";
+import { useTokenJWT } from "@/context/user.context";
 
 type GrouppedHistory = Record<string, HistoryItem[]>;
 
@@ -43,8 +49,9 @@ const grouppedByDate = (datas: HistoryItem[]): GrouppedHistory => {
 };
 
 export default function HistoryTable() {
-  const [history, setHistory] = useState();
+  const { setHistory, dateIncident, status, history } = useHistoryContext();
   const [groupped, setGroupped] = useState<Record<string, HistoryItem[]>>({});
+  const user = useTokenJWT();
   const page = useSearchParams().get("page");
   const router = useRouter();
   if (!page) {
@@ -53,11 +60,49 @@ export default function HistoryTable() {
 
   const getAllHistoryData = async () => {
     try {
-      const response = await getAllHistory(page as string);
+      const response = await getAllHistory(status, dateIncident);
       const results = response;
       setHistory(results);
       const grouped = grouppedByDate(results.data);
       setGroupped(grouped);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const updateRejected = async (id: string) => {
+    try {
+      setGroupped((prev) => {
+        let nextState: GrouppedHistory = {};
+        if (!prev) return {};
+        for (const [date, items] of Object.entries(prev)) {
+          nextState[date] = items.map((item) =>
+            item.incident_id == id ? { ...item, status: "REJECTED" } : item,
+          );
+        }
+        return nextState;
+      });
+      const response = await updateRejectedStatus(id);
+      return response;
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const updateConfirmed = async (id: string) => {
+    try {
+      setGroupped((prev) => {
+        let nextState: GrouppedHistory = {};
+        if (!prev) return {};
+        for (const [date, items] of Object.entries(prev)) {
+          nextState[date] = items.map((item) =>
+            item.incident_id == id ? { ...item, status: "CONFIRMED" } : item,
+          );
+        }
+        return nextState;
+      });
+
+      await updateConfirmedStatus(id);
     } catch (error) {
       console.error(error);
     }
@@ -76,6 +121,12 @@ export default function HistoryTable() {
     getAllHistoryData();
   }, []);
 
+  useEffect(() => {
+    if (history?.data) {
+      setGroupped(grouppedByDate(history?.data));
+    }
+  }, [history]);
+
   const convertDate = (date: Date) => {
     return Intl.DateTimeFormat("id-ID", {
       day: "2-digit",
@@ -87,12 +138,14 @@ export default function HistoryTable() {
   return (
     <Container className="my-4 h-screen">
       {Object.entries(groupped).map(([date, items]) => (
-        <Paper className="px-4 py-4" key={date}>
+        <Paper className="px-4 py-4 my-5" key={date}>
           <Typography>{convertDate(new Date(date))}</Typography>
           <TableContainer className="my-4">
             <Table>
               <TableBody>
                 {items.map((item, index) => {
+                  console.log(item);
+                  console.log(item);
                   return (
                     <TableRow key={index}>
                       <TableCell width={80}>
@@ -118,17 +171,41 @@ export default function HistoryTable() {
                         />
                       </TableCell>
                       <TableCell>
-                        <Tooltip title="Deteksi Benar">
-                          <Button color="success">
-                            <Check />
-                          </Button>
+                        <Tooltip
+                          title={
+                            user?.role == "VISITOR"
+                              ? "Kamu tidak memiliki akses"
+                              : "Deteksi Benar"
+                          }
+                        >
+                          <span>
+                            <Button
+                              disabled={user?.role == "VISITOR"}
+                              onClick={() => updateConfirmed(item.incident_id)}
+                              color="success"
+                            >
+                              <Check />
+                            </Button>
+                          </span>
                         </Tooltip>
                       </TableCell>
                       <TableCell>
-                        <Tooltip title="Deteksi Salah">
-                          <Button color="error">
-                            <XIcon />
-                          </Button>
+                        <Tooltip
+                          title={
+                            user?.role == "VISITOR"
+                              ? "Kamu tidak memiliki akses"
+                              : "Deteksi Salah"
+                          }
+                        >
+                          <span>
+                            <Button
+                              disabled={user?.role == "VISITOR"}
+                              onClick={() => updateRejected(item.incident_id)}
+                              color="error"
+                            >
+                              <XIcon />
+                            </Button>
+                          </span>
                         </Tooltip>
                       </TableCell>
                     </TableRow>

@@ -5,7 +5,7 @@ from jose import jwt
 from lib.db import db
 from datetime import timezone, datetime
 from fastapi import HTTPException, status, Request
-from services.role_check import get_role
+from services.lib_service import get_role
 import httpx
 
 SECRET_KEY = getenv("SECRET_JWT")

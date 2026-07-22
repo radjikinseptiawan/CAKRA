@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { KeyboardEvent, useState } from "react";
 import {
   Box,
   Container,
@@ -11,6 +11,8 @@ import {
   Grid,
 } from "@mui/material";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useHistoryContext } from "../h.hooks";
+import { getAllHistory, getSearchHistory } from "@/services/history.service";
 
 interface HistoryStats {
   total: number;
@@ -34,8 +36,8 @@ const dateOptions = [
 const statusOptions = [
   { value: "all", label: "Semua status" },
   { value: "pending", label: "Belum ditinjau" },
-  { value: "benar", label: "Ditandai benar" },
-  { value: "salah", label: "Ditandai salah" },
+  { value: "confirmed", label: "Ditandai benar" },
+  { value: "rejected", label: "Ditandai salah" },
 ];
 
 function StatCard({
@@ -66,21 +68,38 @@ export default function HistoryControllers({
   onStatusFilterChange,
 }: HistoryControllersProps) {
   const [search, setSearch] = useState("");
-  const [dateFilter, setDateFilter] = useState("all");
-  const [statusFilter, setStatusFilter] = useState("all");
+  const {
+    history,
+    setDateIncident,
+    setHistory,
+    status,
+    dateIncident,
+    setStatus,
+  } = useHistoryContext();
 
-  function handleSearchChange(value: string) {
-    setSearch(value);
-    onSearchChange?.(value);
+  async function handleSearchChange(value: KeyboardEvent<HTMLInputElement>) {
+    if (value.key != "Enter") return null;
+
+    if (search == "") {
+      return window.location.reload();
+    }
+
+    const data = await getSearchHistory(search);
+    setHistory(data);
+    onSearchChange?.(search);
   }
 
-  function handleDateFilterChange(value: string) {
-    setDateFilter(value);
+  async function handleDateFilterChange(value: string) {
+    setDateIncident(value);
+    const response = await getAllHistory(status, value);
+    setHistory(response);
     onDateFilterChange?.(value);
   }
 
-  function handleStatusFilterChange(value: string) {
-    setStatusFilter(value);
+  async function handleStatusFilterChange(value: string) {
+    setStatus(value);
+    const response = await getAllHistory(value, dateIncident);
+    setHistory(response);
     onStatusFilterChange?.(value);
   }
 
@@ -89,15 +108,18 @@ export default function HistoryControllers({
       <Box className="flex flex-wrap gap-3 mb-4">
         <TextField
           size="small"
+          autoComplete="off"
+          autoCorrect="off"
           placeholder="Cari nama kamera"
           value={search}
-          onChange={(e) => handleSearchChange(e.target.value)}
+          onKeyDown={handleSearchChange}
+          onChange={(e) => setSearch(e.target.value)}
           className="flex-1 min-w-[200px]"
         />
         <TextField
           size="small"
           select
-          value={dateFilter}
+          value={dateIncident}
           onChange={(e) => handleDateFilterChange(e.target.value)}
           className="w-[160px]"
         >
@@ -110,7 +132,7 @@ export default function HistoryControllers({
         <TextField
           size="small"
           select
-          value={statusFilter}
+          value={status}
           onChange={(e) => handleStatusFilterChange(e.target.value)}
           className="w-[180px]"
         >
@@ -124,13 +146,14 @@ export default function HistoryControllers({
 
       <Grid container spacing={2}>
         <Grid size={{ xs: 12, sm: 4 }}>
-          <StatCard label="Total kejadian" value={50} />
+          <StatCard label="Total kejadian" value={history?.meta.total} />
         </Grid>
         <Grid size={{ xs: 12, sm: 4 }}>
-          <StatCard label="Belum ditinjau" value={200} color="#B45309" />
-        </Grid>
-        <Grid size={{ xs: 12, sm: 4 }}>
-          <StatCard label="Akurasi AI" value={`96%`} color="#15803D" />
+          <StatCard
+            label="Belum ditinjau"
+            value={history?.meta.pending}
+            color="#B45309"
+          />
         </Grid>
       </Grid>
     </Container>

@@ -11,17 +11,29 @@ import services.account_service as AccountService
 
 router = APIRouter()
 
+# Cari data berdasarkan nama kamera
+@router.get('/data-history/search')
+async def get_search_name(
+        request: Request,
+        s : Optional[str] = None,
+        page:int=Query(default=1,ge=1),
+        limit  : int = Query(default=20,ge=1,le=100),
+        account = Depends(get_current_account)
+        ):
+    return await HistoryServices.get_search_name(request,s,page,limit)
+
+
 @router.get("/data-history",summary="Mengambil semua data dari database")
-async def get_all_data_history(page: int = Query(default=1, ge=1),limit  : int = Query(default=20,ge=1,le=100)):
-    return await HistoryServices.get_all_history(page,limit)
+async def get_all_data_history(request : Request,status : str = "all",date:str = "all",page: int = Query(default=1, ge=1),limit  : int = Query(default=20,ge=1,le=100), account = Depends(get_current_account)):
+    return await HistoryServices.get_all_history(request,status,date,page,limit)
 
 @router.post("/data-history",summary="Menambah data history")
 async def create_data_history(body : HistoryModel):
     return await HistoryServices.created_history(body)
 
 @router.patch("/data-history",summary="Mengubah status")
-async def update_status_data_history(body : HistoryStatusUpdateModel, id: str):
-    return await HistoryServices.update_history(body,id)
+async def update_status_data_history(request: Request,body : HistoryStatusUpdateModel, id: str, Depends=(get_current_account)):
+    return await HistoryServices.update_history(request,body,id)
 
 # Users Data
 
