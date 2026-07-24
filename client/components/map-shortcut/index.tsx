@@ -12,8 +12,6 @@ export default function MapShortcut(data: { data: CameraSchema[] }) {
   const mapInstanceRef = useRef<L.Map | null>(null);
   const [cameras, setCameras] = useState<[]>([]);
 
-  console.log(data);
-
   useEffect(() => {
     if (!mapRef.current || mapInstanceRef.current) return;
 

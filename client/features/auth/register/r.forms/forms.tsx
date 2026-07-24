@@ -19,7 +19,6 @@ export default function RegisterForms() {
   const [isOpenPassword, setIsOpenPassword] = useState(false);
   const router = useRouter();
   const payload = async (data: any) => {
-    console.log(data);
     const response = await registerService(data);
     if (!response) {
       alert("Gagal mendaftarkan akun");

@@ -19,7 +19,6 @@ export default async function RootLayout({
   if (!payload) return null;
 
   const result = payload.payload as UserTypeJWT;
-  console.log(result);
   return (
     <ContainerContextClient user={result}>
       <Suspense>

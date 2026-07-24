@@ -94,7 +94,6 @@ export default function DeviceControllers() {
         public: response.meta.public,
         total_page: response.meta.total_page,
       });
-      console.log("search", response);
 
       setCameras(response.data as any);
 
@@ -127,7 +126,6 @@ export default function DeviceControllers() {
       value,
       page as string,
     );
-    console.log(response);
     if (!response) return null;
     setCount({
       private: response.meta.private,

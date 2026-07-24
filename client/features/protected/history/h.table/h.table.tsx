@@ -128,8 +128,6 @@ export default function HistoryTable() {
             <Table>
               <TableBody>
                 {items.map((item, index) => {
-                  console.log(item);
-                  console.log(item);
                   return (
                     <TableRow key={index}>
                       <TableCell width={80}>
