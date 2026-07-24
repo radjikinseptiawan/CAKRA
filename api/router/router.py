@@ -11,6 +11,12 @@ import services.account_service as AccountService
 
 router = APIRouter()
 
+
+# Get Summary data
+@router.get('/home')
+async def get_summary_data(request: Request, account = Depends(get_current_account)):
+    return await Services.get_summary_data(request)
+
 # Cari data berdasarkan nama kamera
 @router.get('/data-history/search')
 async def get_search_name(
@@ -32,7 +38,7 @@ async def create_data_history(body : HistoryModel):
     return await HistoryServices.created_history(body)
 
 @router.patch("/data-history",summary="Mengubah status")
-async def update_status_data_history(request: Request,body : HistoryStatusUpdateModel, id: str, Depends=(get_current_account)):
+async def update_status_data_history(request: Request,body : HistoryStatusUpdateModel, id: str, account = Depends(get_current_account)):
     return await HistoryServices.update_history(request,body,id)
 
 # Users Data
@@ -75,9 +81,6 @@ async def add_vioalance():
 @router.patch("/violance")
 async def update_status():
     return { "Hello": "Hello"}
-
-
-
 
 
 # Komunikasi web-socket

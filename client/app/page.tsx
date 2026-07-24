@@ -1,6 +1,9 @@
-import { Container } from "@mui/material";
+"use client";
+import { Button, Container } from "@mui/material";
+import { useRouter } from "next/navigation";
 
 export default function Page() {
+  const router = useRouter();
   return (
     <div className="min-h-screen bg-slate-50 text-slate-800 font-sans">
       {/* 2. Hero Section */}
@@ -20,15 +23,21 @@ export default function Page() {
               memitigasi risiko secara presisi.
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-4">
-              <button className="bg-slate-900 hover:bg-slate-800 text-white px-8 py-3 rounded-xl font-medium transition-all">
-                Lihat Dashboard
-              </button>
-              <a
-                href="#fitur"
-                className="inline-flex items-center justify-center border border-slate-300 hover:bg-slate-50 text-slate-700 px-8 py-3 rounded-xl font-medium transition-all"
+              <Button
+                variant="contained"
+                color="success"
+                size="large"
+                onClick={() => router.push("/maps")}
               >
-                Pelajari Fitur
-              </a>
+                Lihat Peta
+              </Button>
+              <Button
+                variant="outlined"
+                color="success"
+                onClick={() => router.push("/docs")}
+              >
+                Dokumentasi
+              </Button>
             </div>
           </div>
         </Container>

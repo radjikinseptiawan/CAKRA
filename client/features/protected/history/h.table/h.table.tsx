@@ -29,6 +29,7 @@ import {
 import Image from "next/image";
 import { useHistoryContext } from "../h.hooks";
 import { useTokenJWT } from "@/context/user.context";
+import { convertDate, statusSelection } from "@/lib/common";
 
 type GrouppedHistory = Record<string, HistoryItem[]>;
 
@@ -108,15 +109,6 @@ export default function HistoryTable() {
     }
   };
 
-  const statusSelection = (val: string) => {
-    if (val == "CONFIRMED") {
-      return "success";
-    } else if (val == "REJECTED") {
-      return "error";
-    }
-    return "default";
-  };
-
   useEffect(() => {
     getAllHistoryData();
   }, []);
@@ -126,14 +118,6 @@ export default function HistoryTable() {
       setGroupped(grouppedByDate(history?.data));
     }
   }, [history]);
-
-  const convertDate = (date: Date) => {
-    return Intl.DateTimeFormat("id-ID", {
-      day: "2-digit",
-      year: "numeric",
-      month: "short",
-    }).format(date);
-  };
 
   return (
     <Container className="my-4 h-screen">

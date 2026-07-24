@@ -68,13 +68,18 @@ export default function DeviceControllers() {
   }, []);
 
   const searchCameraName = async (e: KeyboardEvent<HTMLInputElement>) => {
+    router.push("?page=1");
     if (e.key != "Enter") return null;
     if (!keyword.trim()) return window.location.reload();
     try {
       if (selected) {
         const response: CameraSchema[] | any = await selectandSearch();
         if (!response) return null;
-        setCount({ private: response.private, public: response.public });
+        setCount({
+          private: response.meta.private,
+          public: response.meta.public,
+          total_page: response.meta_total_page,
+        });
         setCameras(response.data);
         return;
       }
@@ -84,7 +89,12 @@ export default function DeviceControllers() {
         page as string,
       );
       if (!response) return null;
-      setCount({ private: response.private, public: response.public });
+      setCount({
+        private: response.meta.private,
+        public: response.meta.public,
+        total_page: response.meta.total_page,
+      });
+      console.log("search", response);
 
       setCameras(response.data as any);
 
@@ -95,6 +105,7 @@ export default function DeviceControllers() {
   };
 
   const selectCamera = async (e: SelectChangeEvent<string>) => {
+    router.push("?page=1");
     const value = e.target.value;
     setSelected(value);
 
@@ -102,7 +113,11 @@ export default function DeviceControllers() {
       const response: CameraSchema[] | any = await selectandSearch();
       if (!response) return null;
 
-      setCount({ private: response.private, public: response.public });
+      setCount({
+        private: response.meta.private,
+        public: response.meta.public,
+        total_page: response.meta.total_page,
+      });
 
       setCameras(response.data);
       return;
@@ -114,12 +129,17 @@ export default function DeviceControllers() {
     );
     console.log(response);
     if (!response) return null;
-    setCount({ private: response.private, public: response.public });
+    setCount({
+      private: response.meta.private,
+      public: response.meta.public,
+      total_page: response.meta.total_page,
+    });
 
     setCameras(response.data as any);
   };
 
   const selectandSearch = async () => {
+    router.push("?page=1");
     if (!keyword) return null;
     try {
       const response: CameraSchema[] | any = await selectCategorySearchKey(
@@ -128,7 +148,11 @@ export default function DeviceControllers() {
         page as string,
       );
       if (!response) return null;
-      setCount({ private: response.private, public: response.public });
+      setCount({
+        private: response.meta.private,
+        public: response.meta.public,
+        total_page: response.meta.total_page,
+      });
 
       setCameras(response.data);
       return response;

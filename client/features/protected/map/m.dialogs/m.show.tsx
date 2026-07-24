@@ -1,6 +1,9 @@
 import { CameraSchema } from "@/@types/camera.type";
 import { useTokenJWT } from "@/context/user.context";
-import { getDetailCamera } from "@/services/maps.service";
+import {
+  getDetailCamera,
+  getDetailCameraPublic,
+} from "@/services/maps.service";
 import {
   Button,
   Dialog,
@@ -25,8 +28,13 @@ export default function MapsDialogsShow() {
 
   const getDetailCameras = async () => {
     if (!id) return null;
-    const response = await getDetailCamera(id as string);
-    setSelectedCamera(response);
+    if (pathname == "/map") {
+      const response = await getDetailCamera(id as string);
+      setSelectedCamera(response);
+    } else if (pathname == "/maps") {
+      const response = await getDetailCameraPublic(id as string);
+      setSelectedCamera(response);
+    }
   };
 
   useEffect(() => {

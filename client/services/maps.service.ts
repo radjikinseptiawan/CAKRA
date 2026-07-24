@@ -33,11 +33,33 @@ export const addCamera = async (payload: CameraSchema) => {
   }
 };
 
+export const getDetailCameraPublic = async (id: string) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/cctvs/public/${id}`, {
+      withCredentials: true,
+    });
+    const results = response.data;
+    return results;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const getAllPublicMapCamera = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/cctvs/public`);
+    const result = response.data;
+    return result;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 /**
  * @description
  * Endpoin untuk mengambil semua kamera
  */
-export const getAllCamera = async (page: string = "1") => {
+export const getAllCamera = async () => {
   try {
     const response = await axios.get(`${BASE_URL}/cctvs/all`, {
       withCredentials: true,
@@ -77,14 +99,15 @@ export const selectCameraCategory = async (
   category: string,
   page: string = "1",
 ) => {
-  if (page == null) return null;
+  const p = page ?? "1";
   try {
-    const response = await axios.get(
-      `${BASE_URL}/cctvs?category=${category}&page=${page}`,
-      {
-        withCredentials: true,
+    const response = await axios.get(`${BASE_URL}/cctvs`, {
+      withCredentials: true,
+      params: {
+        category,
+        page: p,
       },
-    );
+    });
     return response.data;
   } catch (error) {
     console.error(error);
@@ -142,7 +165,6 @@ export const updateCameraCategory = async (
     const response = await axios.patch(`${BASE_URL}/cctvs/${id}`, body, {
       withCredentials: true,
     });
-    console.log(response);
     return response;
   } catch (error) {
     console.log(error);

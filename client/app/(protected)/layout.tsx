@@ -1,5 +1,6 @@
 import { jwtVerify } from "jose";
 import "../globals.css";
+import "leaflet/dist/leaflet.css";
 import Sidebar from "../../components/sidebar";
 import ContainerContextClient, { UserTypeJWT } from "../../context/context";
 import { Suspense } from "react";

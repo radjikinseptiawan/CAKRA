@@ -15,45 +15,50 @@ import math
 from typing import Dict, Any
 
 
-async def all_camera():
-    async def public_count():
-        return await db.ccvtv.count(where={
-        "category" : "PUBLIC"
-       })
-        
-    async def private_count():
-        return await db.ccvtv.count(where={
-        "category" : "PRIVATE"
-    })
+async def get_public_camera_stream(id):
+    try:
+        psql = await db.ccvtv.find_first(where={"cctv_id" : id, "category" : "PUBLIC"})
 
-    public,private = await asyncio.gather(
-    public_count(),
-    private_count()
-    )
+        if psql is None:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Kamera dengan kode {id} tidak ditemukan!"
+            )
 
+        return psql
+    except httpx.HTTPStatusError as http_error:
+        raise http_error
+    except httpx.RequestError as error:
+        raise error
 
+async def get_public_camera_map():
+    try:
+        camera = await db.ccvtv.find_many(where={"category" : "PUBLIC"})
 
-        
-    async def fetch_total():
-        return await db.ccvtv.count()
-
-    async def fetch_data():
-        return await db.ccvtv.find_many()
-    data, total_data = await asyncio.gather(fetch_data(), fetch_total())
+        if camera is None:
+            HTTPException(detail="Camera still empty")
 
 
-    return {
-        "data": data,
-        "meta": {
-            "total_data": total_data,
-            "private" : private,
-            "public" : public
-        }
-    }
+        return camera
+    except httpx.HTTPStatusError as error:
+        raise HTTPException(detail=error)
+    except httpx.RequestError as error:
+        raise HTTPException(detail=error)   
+    
+async def get_all_camera_map_service(request):
+    cookie = request.cookies.get("access_token")
 
+    if cookie is None:
+        raise HTTPException(detail="Access denied, cookie not found!", status_code=status.HTTP_401_UNAUTHORIZED)
+    try:
+        camera = await db.ccvtv.find_many()
 
-
-
+        return camera
+    except httpx.HTTPStatusError as error:
+        raise HTTPException(detail=error)
+    except httpx.RequestError as error:
+        raise HTTPException(detail=error)    
+    
 async def get_camera_service(
     page: int = 1,
     search: Optional[str] = None,
@@ -113,12 +118,14 @@ async def get_camera_service(
 
         return {
             "data": data,
+            "meta":{
             "page": page,
             "limit": limit,
             "total_data": total_data,
             "total_page": (total_data + limit - 1) // limit,
             "public": public,
             "private": private,
+            }
         }
 
     except Exception as e:

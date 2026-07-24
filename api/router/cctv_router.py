@@ -5,9 +5,17 @@ from schema.cctv_schema import CCTVCreate, CCTVUpdate
 from services import cctv_service as CCTVService
 cctv = APIRouter()
 
+@cctv.get("/cctvs/public/{id}")
+async def cctv_public_stream(id):
+    return await CCTVService.get_public_camera_stream(id)
+
+@cctv.get("/cctvs/public")
+async def cctv_public():
+    return await CCTVService.get_public_camera_map()
+
 @cctv.get("/cctvs/all")
-async def cctv_list( account = Depends(get_current_account)):
-    return await CCTVService.all_camera()
+async def cctv_list(request: Request ,account = Depends(get_current_account)):
+    return await CCTVService.get_all_camera_map_service(request)
 
 @cctv.get("/cctvs", summary="Mengambil semua CCTV dari database")
 async def get_camera_list(page:str,search : Optional[str] = None, category : Optional[str] = None,request:Request = None,account = Depends(get_current_account)):

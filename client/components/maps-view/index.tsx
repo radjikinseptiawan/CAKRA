@@ -1,18 +1,13 @@
 "use client";
-import L, { popup } from "leaflet";
-import { useEffect, useRef, useState } from "react";
-import { KabupatenEntry, RawEntry } from "@/@types/maps.type";
-import { buildPopupHtml, groupByKabupaten } from "../popup";
-import { getAllCamera, getViolence } from "@/services/maps.service";
-import { useKotaKab } from "@/context/kota.context";
+import L from "leaflet";
+import { useEffect, useRef } from "react";
 import { useMapProvider } from "@/context/map.context";
 import { Cctv } from "lucide-react";
 import { renderToString } from "react-dom/server";
-import { ca } from "zod/locales";
 import { CameraSchema } from "@/@types/camera.type";
 import { useRouter, useSearchParams } from "next/navigation";
 
-export default function Maps({ data }: { data: CameraSchema[] }) {
+export default function MapsView({ data }: { data: CameraSchema[] }) {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
   const { setSelectedCoordinat, setIsOpen } = useMapProvider();
@@ -41,12 +36,34 @@ export default function Maps({ data }: { data: CameraSchema[] }) {
 
     map.on("dblclick", (e: L.LeafletMouseEvent) => {
       const { lat, lng } = e.latlng;
-
       setSelectedCoordinat({ lat, lng });
       setIsOpen(true);
     });
+
     mapInstanceRef.current = map;
+
+    // --- FIX: Leaflet measures its container size once, at init time.
+    // If this component is mounted through an extra layer (dynamic import,
+    // async parent data-fetch, wrapper providers, etc.) the container may
+    // not have settled to its final size yet, causing the map to render
+    // with a wrong/partial size (visible as the "cropped map + big
+    // scrollbars" bug). We force a re-measure shortly after mount...
+    const settleTimeout = setTimeout(() => {
+      map.invalidateSize();
+    }, 100);
+
+    // ...and keep re-measuring any time the container itself resizes
+    // (sidebar collapse, responsive breakpoints, parent reflow, this
+    // component being reused in a different layout, etc.) so the bug
+    // can't come back regardless of where this component is mounted.
+    const resizeObserver = new ResizeObserver(() => {
+      map.invalidateSize();
+    });
+    resizeObserver.observe(mapRef.current);
+
     return () => {
+      clearTimeout(settleTimeout);
+      resizeObserver.disconnect();
       map.remove();
       mapInstanceRef.current = null;
     };
@@ -64,6 +81,10 @@ export default function Maps({ data }: { data: CameraSchema[] }) {
       const lngNum = parseFloat(lng);
 
       if (!isNaN(latNum) && !isNaN(lngNum)) {
+        // make sure the map has the right size before flying, otherwise
+        // the animation can land on the wrong point if size was still
+        // stale at the time flyTo is called
+        map.invalidateSize();
         map.flyTo([latNum, lngNum], 18, {
           animate: true,
           duration: 1.5,
@@ -76,9 +97,17 @@ export default function Maps({ data }: { data: CameraSchema[] }) {
     const map = mapInstanceRef.current;
 
     if (!map) {
-      console.log(`Peta Belum siap, skip render marker`);
+      console.log(`Peta belum siap, skip render marker`);
       return;
     }
+
+    // clear old markers before re-adding, otherwise markers stack up
+    // every time `data` changes (e.g. after search/filter)
+    map.eachLayer((layer) => {
+      if (layer instanceof L.Marker) {
+        map.removeLayer(layer);
+      }
+    });
 
     const cctvSvgString = renderToString(
       <Cctv size={18} className="text-white" />,
@@ -131,6 +160,7 @@ export default function Maps({ data }: { data: CameraSchema[] }) {
         });
         textContainer.appendChild(button);
         popupContent.appendChild(textContainer);
+
         L.marker([cam.latitude, cam.longitude], { icon: cctvIcon })
           .addTo(map)
           .bindPopup(popupContent);

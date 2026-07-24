@@ -1,4 +1,5 @@
 import { CameraSchema } from "@/@types/camera.type";
+import { SummaryType } from "@/@types/home.type";
 import { getAllCamera } from "@/services/maps.service";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
@@ -6,19 +7,12 @@ import { Cctv } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { renderToString } from "react-dom/server";
 
-export default function MapShortcut() {
+export default function MapShortcut(data: { data: CameraSchema[] }) {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
   const [cameras, setCameras] = useState<[]>([]);
 
-  const getAllCamerasData = async () => {
-    const response = await getAllCamera();
-    setCameras(response.data);
-  };
-
-  useEffect(() => {
-    getAllCamerasData();
-  }, []);
+  console.log(data);
 
   useEffect(() => {
     if (!mapRef.current || mapInstanceRef.current) return;
@@ -80,12 +74,12 @@ export default function MapShortcut() {
       iconAnchor: [16, 32],
     });
 
-    cameras.forEach((cam: CameraSchema) => {
+    data.data.forEach((cam: CameraSchema) => {
       if (cam.latitude && cam.longitude) {
         L.marker([cam.latitude, cam.longitude], { icon: cctvIcon }).addTo(map);
       }
     });
-  }, [cameras]);
+  }, [data]);
 
   return (
     <div

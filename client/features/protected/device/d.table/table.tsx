@@ -26,9 +26,7 @@ import { useCameraContext } from "../d.hooks/device.hooks";
 import { useTokenJWT } from "@/context/user.context";
 
 export default function DeviceTable() {
-  const { camera, setCameras, setCount, selected } = useCameraContext();
-  const [number, setNumber] = useState<number>(1);
-  const [data, setData] = useState<any>();
+  const { camera, setCameras, setCount, selected, count } = useCameraContext();
   const router = useRouter();
   const page = useSearchParams().get("page");
   const user = useTokenJWT();
@@ -36,13 +34,17 @@ export default function DeviceTable() {
   const getAllCamerasData = async () => {
     if (!page) {
       router.push("?page=1");
+      return;
     }
 
     const response = await selectCameraCategory(selected, page as string);
     if (!response) return null;
 
-    setCount({ private: response.private, public: response.public });
-    setData(response);
+    setCount({
+      private: response.meta.private,
+      public: response.meta.public,
+      total_page: response.meta.total_page,
+    });
     setCameras(response.data);
   };
 
@@ -61,13 +63,12 @@ export default function DeviceTable() {
 
   useEffect(() => {
     getAllCamerasData();
-  }, [number, page]);
+  }, [selected, page]);
 
   const handlePageChange = (
     event: React.ChangeEvent<unknown>,
     value: number,
   ) => {
-    setNumber(value);
     router.push(`?page=${value}`);
   };
 
@@ -100,7 +101,7 @@ export default function DeviceTable() {
                     )
                   }
                 >
-                  <TableCell>{(number - 1) * 20 + index + 1}</TableCell>
+                  <TableCell>{(Number(page) - 1) * 20 + index + 1}</TableCell>
                   <TableCell className="max-w-[140px] truncate sm:max-w-none">
                     {item.camera_name}
                   </TableCell>
@@ -178,8 +179,8 @@ export default function DeviceTable() {
 
         <div className="flex justify-center my-4">
           <Pagination
-            count={data?.total_page || 1}
-            page={number}
+            count={count.total_page || 1}
+            page={Number(page)}
             onChange={handlePageChange}
             color="standard"
             variant="outlined"

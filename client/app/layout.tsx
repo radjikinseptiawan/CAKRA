@@ -4,6 +4,7 @@ import ContainerContextClient from "@/context/context";
 import { createTheme, CssBaseline, ThemeProvider } from "@mui/material";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v16-appRouter";
 import "./globals.css";
+import "leaflet/dist/leaflet.css";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
